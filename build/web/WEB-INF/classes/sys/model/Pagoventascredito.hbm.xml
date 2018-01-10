@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Pagoventascredito" table="pagoventascredito" catalog="ovandos" optimistic-lock="version">
+        <id name="idPagoVentaCred" type="java.lang.Integer">
+            <column name="IdPagoVentaCred" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cronoventascredito" class="sys.model.Cronoventascredito" fetch="select">
+            <column name="IdCronoV" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="montoPagado" type="big_decimal">
+            <column name="MontoPagado" precision="8" not-null="true" />
+        </property>
+        <property name="fechaPago" type="timestamp">
+            <column name="FechaPago" length="19" not-null="true" />
+        </property>
+        <property name="saldo" type="big_decimal">
+            <column name="Saldo" precision="8" not-null="true" />
+        </property>
+        <property name="observacion" type="string">
+            <column name="Observacion" length="300" />
+        </property>
+    </class>
+</hibernate-mapping>

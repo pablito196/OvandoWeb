@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Detallefacturaanulada" table="detallefacturaanulada" catalog="ovandos" optimistic-lock="version">
+        <id name="idDetalleFacturaAnulada" type="java.lang.Integer">
+            <column name="IdDetalleFacturaAnulada" />
+            <generator class="identity" />
+        </id>
+        <property name="numeroVenta" type="java.lang.Integer">
+            <column name="NumeroVenta" />
+        </property>
+        <property name="codigoArticulo" type="string">
+            <column name="CodigoArticulo" length="20" />
+        </property>
+        <property name="precioVentaReal" type="big_decimal">
+            <column name="PrecioVentaReal" precision="7" />
+        </property>
+        <property name="cantidad" type="java.lang.Float">
+            <column name="Cantidad" precision="5" />
+        </property>
+        <property name="total" type="big_decimal">
+            <column name="Total" precision="8" />
+        </property>
+        <property name="idFactura" type="java.lang.Integer">
+            <column name="IdFactura" />
+        </property>
+    </class>
+</hibernate-mapping>

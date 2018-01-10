@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Tipopago" table="tipopago" catalog="ovandos" optimistic-lock="version">
+        <id name="idTipopago" type="java.lang.Integer">
+            <column name="idTipopago" />
+            <generator class="identity" />
+        </id>
+        <property name="descPago" type="string">
+            <column name="DescPago" length="80" not-null="true" />
+        </property>
+        <set name="ventas" table="venta" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipopago" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Venta" />
+        </set>
+        <set name="compras" table="compra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipopago" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Compra" />
+        </set>
+        <set name="preventas" table="preventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipopago" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Preventa" />
+        </set>
+    </class>
+</hibernate-mapping>

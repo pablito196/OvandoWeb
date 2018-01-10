@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar Ventas</h2>
+                <h:form id="formAdministrarVenta" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblVentas" paginator="true" paginatorPosition="top" 
+                                 var="vent" value="#{ventaBEAN.listaVentasFormateada}" emptyMessage="No hay datos de ventas" rows="15" filteredValue="#{ventaBEAN.listaFiltradaVentasFormateada}">
+                        <p:column headerText="Nº Venta" filterBy="#{vent.numeroVenta}" filterMatchMode="contains">
+                            <h:outputText value="#{vent.numeroVenta}" />
+                        </p:column>
+                        <p:column headerText="Nº Preventa" filterBy="#{vent.numeroPreventa}" filterMatchMode="contains">
+                            <h:outputText value="#{vent.numeroPreventa}" />
+                        </p:column>
+                        <p:column headerText="Fecha" filterBy="#{vent.fechaVenta}" filterMatchMode="contains">
+                            <h:outputText value="#{vent.fechaVenta}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Cliente" filterBy="#{vent.nombresCliente}" filterMatchMode="contains">
+                            <h:outputText value="#{vent.nombresCliente}" /> 
+                        </p:column>
+                        <p:column headerText="Tipo" >
+                            <h:outputText value="#{vent.tipoVenta}" />
+                        </p:column>
+                        <p:column headerText="TC">
+                            <h:outputText value="#{vent.tipoCambio}" />
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputText value="#{vent.total}" />
+                        </p:column>
+                        <p:column headerText="Saldo">
+                            <h:outputText value="#{vent.saldo}" />
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{vent.estado}" />
+                        </p:column>
+                        <p:column headerText="Observaciones">
+                            <h:outputText value="#{vent.observaciones}" />
+                        </p:column>
+                        <p:column headerText="Sucursal">
+                            <h:outputText value="#{vent.sucursal}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Detalle" oncomplete="PF('dialogVerDetalleVenta').show();" update="formVerDetalleVenta">
+                                <f:setPropertyActionListener target="#{ventaBEAN.ventaFormateada}" value="#{vent}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Anular" oncomplete="PF('dialogAnularVenta').show();" update="formAnularVenta">
+                                <f:setPropertyActionListener target="#{ventaBEAN.ventaFormateada}" value="#{vent}"/>
+                            </p:commandButton>
+                        </p:column>  
+                        <p:column headerText="">
+                            <p:commandButton value="Facturar" oncomplete="PF('dialogFacturar').show();" update="formFacturar">
+                                <f:setPropertyActionListener target="#{ventaBEAN.ventaFormateada}" value="#{vent}"/>
+                            </p:commandButton>
+                        </p:column>    
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formVerDetalleVenta">
+                    <p:dialog id="dlgVerDetalleVenta" widgetVar="dialogVerDetalleVenta" resizable="false" showEffect="explode" showHeader="true" header="Detalle de Venta"
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Nº de Venta:" />
+                            <p:outputLabel value="#{ventaBEAN.ventaFormateada.numeroVenta}" />
+                            <p:outputLabel value="Nº de Preventa:" />
+                            <p:outputLabel value="#{ventaBEAN.ventaFormateada.numeroPreventa}"/>
+                            <p:outputLabel value="Fecha:" />
+                            <p:outputLabel value="#{ventaBEAN.ventaFormateada.fechaVenta}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Cliente:" />
+                            <p:outputLabel value="#{ventaBEAN.ventaFormateada.nombresCliente}" />
+                            <p:outputLabel value="Vendedor:" />
+                            <p:outputLabel value="Tipo:" />
+                            <p:outputLabel value="#{ventaBEAN.ventaFormateada.tipoVenta}"/>
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:dataTable id="tblDetalleVenta" var="det" value="#{ventaBEAN.listaDetalleventaAdministracion}" emptyMessage="No hay datos de artículos en el detalle de venta"       
+                                     style="width:800px;" >
+                            <p:column  headerText="Codigo" >  
+                                <h:outputText  value="#{det.articulo.codigoArticulo}" />                  
+                            </p:column>		
+                            <p:column  headerText="Nombre" >  
+                                <h:outputText value="#{det.articulo.nombre}" />                  
+                            </p:column>			
+                            <p:column  headerText="Descripcion" >  
+                                <h:outputText value="#{det.articulo.descripcion}"/>                  
+                            </p:column>
+                            <p:column  headerText="Cantidad" >  
+                                <h:outputText value="#{det.cantidad}" />
+                            </p:column>
+                            <p:column  headerText="Precio Unitario" >  
+                                <h:outputText value="#{det.precioVentaReal}" />                 
+                            </p:column>
+                            <p:column  headerText="Precio Total" >  
+                                <h:outputText value="#{det.total}" />                  
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalCompra" columns="2">
+                            <p:outputLabel value="TOTAL: Bs." style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+                            <p:outputLabel id="lblTotalVenta" value="#{ventaBEAN.ventaFormateada.total}" style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+
+                        </h:panelGrid>
+
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogVerDetalleVenta').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formAnularVenta" >
+                    <p:dialog id="dlgAnularVenta" widgetVar="dialogAnularVenta" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Anular Venta">
+                        <h:outputText value="Esta seguro de anular la venta? " />
+                        <p:commandButton value="Si" actionListener="#{ventaBEAN.anularVenta()}" update="formAdministrarVenta" 
+                                         oncomplete="PF('dialogAnularVenta').hide()" />
+                        <p:commandButton value="No" immediate="true" oncomplete="PF('dialogAnularVenta').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formFacturar">
+                    <p:dialog id="dlgFacturar" widgetVar="dialogFacturar" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Facturar">
+                        <h:outputText value="Desea emitir factura? " />
+                        <p:commandButton value="Si" actionListener="#{ventaBEAN.prepararDatosFactura()}" update=":formDatosFactura:dlgDatosFactura" 
+                                         oncomplete="PF('dialogDatosFactura').show();" />
+                        <p:commandButton value="No" immediate="true" oncomplete="PF('dialogFacturar').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formDatosFactura">
+                    <p:dialog id="dlgDatosFactura" widgetVar="dialogDatosFactura" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Datos para la factura">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="CI/NIT: " />
+                            <p:inputText value="#{ventaBEAN.nitFactura}" size="12" />
+                            <h:outputText value="Nombre/Razon Social: " />
+                            <p:inputText value="#{ventaBEAN.razonSocialFactura}" size="30" />
+                        </h:panelGrid>  
+
+                        <p:commandButton value="Facturar" immediate="true" actionListener="#{ventaBEAN.facturar()}" oncomplete="PF('dialogDatosFactura').hide(); PF('dialogFacturar').hide();" update=":formAdministrarVenta" process="@this" />
+                        
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogDatosFactura').hide(); PF('dialogFacturar').hide();" />
+                        
+                        <p:commandButton value="Continua luego de imprimir" actionListener="#{ventaBEAN.reset()}" immediate="true" ajax="false" >
+                            <p:ajax update=":formAdministrarVenta" resetValues="true" />
+                        </p:commandButton>
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

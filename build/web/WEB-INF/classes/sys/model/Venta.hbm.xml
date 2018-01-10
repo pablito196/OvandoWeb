@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Venta" table="venta" catalog="ovandos" optimistic-lock="version">
+        <id name="numeroVenta" type="java.lang.Integer">
+            <column name="NumeroVenta" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="almacen" class="sys.model.Almacen" fetch="select">
+            <column name="IdAlmacen" />
+        </many-to-one>
+        <many-to-one name="cliente" class="sys.model.Cliente" fetch="select">
+            <column name="CiCliente" length="20" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tipomoneda" class="sys.model.Tipomoneda" fetch="select">
+            <column name="idTipomoneda" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tipopago" class="sys.model.Tipopago" fetch="select">
+            <column name="idTipopago" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="tiempoRegistro" type="java.lang.Long">
+            <column name="TiempoRegistro" />
+        </property>
+        <property name="fechaVenta" type="timestamp">
+            <column name="FechaVenta" length="19" not-null="true" />
+        </property>
+        <property name="montoTotal" type="big_decimal">
+            <column name="MontoTotal" precision="8" />
+        </property>
+        <property name="tipoCambio" type="big_decimal">
+            <column name="TipoCambio" precision="4" />
+        </property>
+        <property name="impuesto" type="java.lang.Double">
+            <column name="Impuesto" precision="9" />
+        </property>
+        <property name="observaciones" type="string">
+            <column name="Observaciones" length="300" />
+        </property>
+        <property name="estado" type="string">
+            <column name="Estado" length="15" />
+        </property>
+        <property name="numeroCotizacion" type="java.lang.Integer">
+            <column name="NumeroCotizacion" />
+        </property>
+        <property name="fechaHoraRegistro" type="timestamp">
+            <column name="FechaHoraRegistro" length="19" />
+        </property>
+        <property name="numeroPreVenta" type="java.lang.Integer">
+            <column name="NumeroPreVenta" />
+        </property>
+        <set name="ventafacturas" table="ventafactura" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="NumeroVenta" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Ventafactura" />
+        </set>
+        <set name="cronoventascreditos" table="cronoventascredito" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="NumeroVenta" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cronoventascredito" />
+        </set>
+        <set name="detalleventas" table="detalleventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="NumeroVenta" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detalleventa" />
+        </set>
+        <set name="remitos" table="remito" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="NumeroVenta" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Remito" />
+        </set>
+        <set name="devolucions" table="devolucion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="NumeroVenta" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Devolucion" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar cotización</h2>
+                <h:form id="formAdministrarCotizacion" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblCotizacion" paginator="true" paginatorPosition="top" 
+                                 var="cotiza" value="#{cotizacionBEAN.listaCotizaciones}" emptyMessage="No hay datos de cotizaciones" rows="15" filteredValue="#{cotizacionBEAN.listaFiltradaCotizaciones}">
+                        <p:column headerText="Nº Cotizacion" filterBy="#{cotiza.numeroCotizacion}" filterMatchMode="contains">
+                            <h:outputText value="#{cotiza.numeroCotizacion}" />
+                        </p:column>
+                        <p:column headerText="Fecha" filterBy="#{cotiza.fechaCotizacion}" filterMatchMode="contains">
+                            <h:outputText value="#{cotiza.fechaCotizacion}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Cliente" filterBy="#{cotiza.cliente.nombresCliente}" filterMatchMode="contains">
+                            <h:outputText value="#{cotiza.cliente.nombresCliente}" />
+                        </p:column>
+                        <p:column headerText="Vendedor">
+                            <h:outputText value="#{cotiza.usuario.empleado.nombresEmpleado} #{cotiza.usuario.empleado.apellidoPaterno} #{cotiza.usuario.empleado.apellidoMaterno}" />
+                        </p:column>
+                        <p:column headerText="Observaciones">
+                            <h:outputText value="#{cotiza.observaciones}" />
+                        </p:column>
+                        <p:column headerText="Tipo Cambio">
+                            <h:outputText value="#{cotiza.tipoCambio}" />
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputText value="#{cotiza.montoTotal}" />
+                        </p:column>
+
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Detalle" oncomplete="PF('dialogVerDetalleCotizacion').show();" update="formVerDetalleCotizacion">
+                                <f:setPropertyActionListener target="#{cotizacionBEAN.cotizacion}" value="#{cotiza}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Cotizacion">
+                                <f:setPropertyActionListener target="#{cotizacionBEAN.cotizacion}" value="#{cotiza}"/>    
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+                <h:form id="formVerDetalleCotizacion">
+                    <p:dialog id="dlgVerDetalleCotizacion" widgetVar="dialogVerDetalleCotizacion" resizable="false" showEffect="explode" showHeader="true" header="DETALLE DE COTIZACION"
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Nº de Cotizacion:" />
+                            <p:outputLabel id="lblNumeroCotizacion" value="#{cotizacionBEAN.cotizacion.numeroCotizacion}" />
+                            <p:outputLabel value="Fecha:" />
+                            <p:outputLabel id="lblFechaCotizacion" value="#{cotizacionBEAN.cotizacion.fechaCotizacion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Cliente:" />
+                            <p:outputLabel id="lblNombreCliente" value="#{cotizacionBEAN.cotizacion.cliente.nombresCliente}" />
+                             <p:outputLabel value="Vendedor:" />
+                             <p:outputLabel id="lblNombreVendedor" value="#{cotizacionBEAN.cotizacion.usuario.empleado.nombresEmpleado} #{cotizacionBEAN.cotizacion.usuario.empleado.apellidoPaterno} #{cotizacionBEAN.cotizacion.usuario.empleado.apellidoMaterno}" />
+                            <p:outputLabel value="Observaciones:" />
+                            <p:outputLabel id="lblObservaciones" value="#{cotizacionBEAN.cotizacion.observaciones}"/>
+                            <p:outputLabel value="Vigencia:" />
+                            <p:outputLabel id="lblVigencia" value="#{cotizacionBEAN.cotizacion.vigencia}"/>
+                              
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:dataTable id="tblDetalleCotizacion" var="det" value="#{cotizacionBEAN.listaDetallecotizacionPorCotizacion}" emptyMessage="No hay datos de artículos en el detalle de cotizacion"       
+                                     style="width:1000px;" >
+                            <p:column  headerText="Codigo" style="width: 70px;">  
+                                <h:outputText  value="#{det.articulo.codigoArticulo}" />                  
+                            </p:column>		
+                            <p:column  headerText="Nombre" style="width: 300px;">  
+                                <h:outputText value="#{det.articulo.nombre}" />                  
+                            </p:column>			
+                            <p:column  headerText="Descripcion" >  
+                                <h:outputText value="#{det.articulo.descripcion}"/>                  
+                            </p:column>
+                            <p:column  headerText="Cantidad" style="width: 60px; text-align: center">  
+                                <h:outputText value="#{det.cantidad}" />
+                            </p:column>
+                            <p:column  headerText="Precio Unitario" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{det.precio}" />                 
+                            </p:column>
+                            <p:column  headerText="Precio Total" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{det.monto}" />                  
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalCotizacion" columns="2">
+                            <p:outputLabel value="TOTAL: Bs." style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+                            <p:outputLabel id="lblTotalCotizacion" value="#{cotizacionBEAN.cotizacion.montoTotal}" style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+
+                        </h:panelGrid>
+                        
+                        <p:commandButton value="Cerrar" immediate="true" oncomplete="PF('dialogVerDetalleCotizacion').hide();" />
+                    </p:dialog>
+                </h:form>
+            
+            
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

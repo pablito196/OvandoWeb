@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Factura" table="factura" catalog="ovandos" optimistic-lock="version">
+        <id name="idFactura" type="java.lang.Integer">
+            <column name="IdFactura" />
+            <generator class="identity" />
+        </id>
+        <property name="numeroFactura" type="int">
+            <column name="NumeroFactura" not-null="true" />
+        </property>
+        <property name="numeroAutorizacion" type="string">
+            <column name="NumeroAutorizacion" length="50" not-null="true" />
+        </property>
+        <property name="fechaFactura" type="timestamp">
+            <column name="FechaFactura" length="19" not-null="true" />
+        </property>
+        <property name="nitCliente" type="string">
+            <column name="NitCliente" length="11" not-null="true" />
+        </property>
+        <property name="razonSocial" type="string">
+            <column name="RazonSocial" length="150" not-null="true" />
+        </property>
+        <property name="monto" type="big_decimal">
+            <column name="Monto" precision="7" not-null="true" />
+        </property>
+        <property name="codigoControl" type="string">
+            <column name="CodigoControl" length="50" not-null="true" />
+        </property>
+        <property name="estado" type="string">
+            <column name="Estado" length="20" not-null="true" />
+        </property>
+        <property name="tiempoRegistro" type="java.lang.Long">
+            <column name="TiempoRegistro" />
+        </property>
+        <set name="preventafacturas" table="preventafactura" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdFactura" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Preventafactura" />
+        </set>
+        <set name="ventafacturas" table="ventafactura" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdFactura" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Ventafactura" />
+        </set>
+    </class>
+</hibernate-mapping>

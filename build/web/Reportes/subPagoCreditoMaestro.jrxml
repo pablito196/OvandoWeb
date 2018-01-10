@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="subPagoCreditoMaestro" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="venta_NumeroVenta" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     venta.`NumeroVenta` AS venta_NumeroVenta,
+     pagoventascredito.`IdPagoVentaCred` AS pagoventascredito_IdPagoVentaCred,
+     pagoventascredito.`MontoPagado` AS pagoventascredito_MontoPagado,
+     pagoventascredito.`FechaPago` AS pagoventascredito_FechaPago,
+     pagoventascredito.`Saldo` AS pagoventascredito_Saldo,
+     pagoventascredito.`Observacion` AS pagoventascredito_Observacion,
+     cronoventascredito.`FechaProgramada` AS cronoventascredito_FechaProgramada
+FROM
+     `venta` venta INNER JOIN `cronoventascredito` cronoventascredito ON venta.`NumeroVenta` = cronoventascredito.`NumeroVenta`
+     INNER JOIN `pagoventascredito` pagoventascredito ON cronoventascredito.`IdCronoV` = pagoventascredito.`IdCronoV`AND  venta.`NumeroVenta` = $P{venta_NumeroVenta}]]>
+	</queryString>
+	<field name="pagoventascredito_IdPagoVentaCred" class="java.lang.Integer"/>
+	<field name="pagoventascredito_MontoPagado" class="java.math.BigDecimal"/>
+	<field name="pagoventascredito_FechaPago" class="java.sql.Timestamp"/>
+	<field name="pagoventascredito_Saldo" class="java.math.BigDecimal"/>
+	<field name="pagoventascredito_Observacion" class="java.lang.String"/>
+	<field name="cronoventascredito_FechaProgramada" class="java.sql.Timestamp"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="53" y="4" width="70" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="129" y="3" width="123" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Programada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="237" y="4" width="100" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="353" y="4" width="100" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto Pagado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="4" width="100" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="556" y="4" width="100" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observación]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="52" y="1" width="70" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{pagoventascredito_IdPagoVentaCred}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="130" y="1" width="100" height="16"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{cronoventascredito_FechaProgramada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="237" y="2" width="100" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{pagoventascredito_FechaPago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="338" y="2" width="100" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{pagoventascredito_MontoPagado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="438" y="1" width="100" height="16"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{pagoventascredito_Saldo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="556" y="3" width="179" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{pagoventascredito_Observacion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="17" splitType="Stretch">
+			<line>
+				<reportElement x="51" y="4" width="684" height="1"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

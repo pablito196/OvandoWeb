@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Cronocomprascred" table="cronocomprascred" catalog="ovandos" optimistic-lock="version">
+        <id name="idCronogramaC" type="java.lang.Integer">
+            <column name="IdCronogramaC" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="compra" class="sys.model.Compra" fetch="select">
+            <column name="IdCompra" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="fechaProgramada" type="timestamp">
+            <column name="FechaProgramada" length="19" not-null="true" />
+        </property>
+        <property name="fechaHoraRegistro" type="timestamp">
+            <column name="FechaHoraRegistro" length="19" />
+        </property>
+        <set name="pagocompracreditos" table="pagocompracredito" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdCronogramaC" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Pagocompracredito" />
+        </set>
+    </class>
+</hibernate-mapping>

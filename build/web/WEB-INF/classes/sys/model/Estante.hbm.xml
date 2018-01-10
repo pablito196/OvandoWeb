@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Estante" table="estante" catalog="ovandos" optimistic-lock="version">
+        <id name="codigoEstante" type="string">
+            <column name="CodigoEstante" length="50" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="almacen" class="sys.model.Almacen" fetch="select">
+            <column name="IdAlmacen" not-null="true" />
+        </many-to-one>
+        <property name="descripcion" type="string">
+            <column name="Descripcion" length="150" />
+        </property>
+        <property name="numeroFilas" type="byte">
+            <column name="NumeroFilas" not-null="true" />
+        </property>
+        <property name="numeroColumnas" type="byte">
+            <column name="NumeroColumnas" not-null="true" />
+        </property>
+        <property name="estadoEstante" type="string">
+            <column name="EstadoEstante" length="15" />
+        </property>
+        <set name="ubicacions" table="ubicacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoEstante" length="50" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Ubicacion" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar compras</h2>
+
+                <h:form id="formAdministrarCompra" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblCompras" paginator="true" paginatorPosition="top" 
+                                 var="comp" value="#{comprasBEAN.listaCompras}" emptyMessage="No hay datos de compras" rows="15" filteredValue="#{comprasBEAN.listaFiltradaCompras}">
+                        <p:column headerText="Nº Compra" filterBy="#{comp.idCompra}" filterMatchMode="contains">
+                            <h:outputText value="#{comp.idCompra}" />
+                        </p:column>
+                        <p:column headerText="Nº Factura" filterBy="#{comp.facturaCompra}" filterMatchMode="contains">
+                            <h:outputText value="#{comp.facturaCompra}" />
+                        </p:column>
+                        <p:column headerText="Nº Recibo" filterBy="#{comp.numeroRecibo}" filterMatchMode="contains">
+                            <h:outputText value="#{comp.numeroRecibo}" />
+                        </p:column>
+                        <p:column headerText="Proveedor" filterBy="#{comp.proveedor.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{comp.proveedor.nombre}" />
+                        </p:column>
+                        <p:column headerText="Fecha" filterBy="#{comp.fechaCompra}" filterMatchMode="contains">
+                            <h:outputText value="#{comp.fechaCompra}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Tipo" filterBy="#{comp.tipopago.descPago}" filterMatchMode="contains">
+                            <h:outputText value="#{comp.tipopago.descPago}" />
+                        </p:column>
+                        <p:column headerText="Observaciones">
+                            <h:outputText value="#{comp.observacionCompra}" />
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{comp.estado}" />
+                        </p:column>
+                        <p:column headerText="Tipo Cambio">
+                            <h:outputText value="#{comp.tipoCambio}" />
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputText value="#{comp.montoCompra}" />
+                        </p:column>
+                        <p:column headerText="Sucursal">
+                            <h:outputText value="#{comp.almacen.sucursal.nombreSucursal}" />
+                        </p:column>
+
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Detalle" oncomplete="PF('dialogVerDetalleCompra').show();" update="formVerDetalleCompra">
+                                <f:setPropertyActionListener target="#{comprasBEAN.compra}" value="#{comp}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="" style="width: 60px; text-align: center">
+                            <h:commandLink id="btnVisualizar"  action="#{comprasBEAN.visualizarCompra()}" title="Permite obtener una vista previa de la compra" target="_blank">
+                            <f:setPropertyActionListener target="#{comprasBEAN.compra}" value="#{comp}"/>
+                                <p:graphicImage style="width:25px" url="/resources/images/preview.png"/>
+
+                        </h:commandLink>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Anular" oncomplete="PF('dialogAnularCompra').show();" update=":formAnularCompra">
+                                <f:setPropertyActionListener target="#{comprasBEAN.compra}" value="#{comp}"/>    
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formVerDetalleCompra">
+                    <p:dialog id="dlgVerDetalleCompra" widgetVar="dialogVerDetalleCompra" resizable="false" showEffect="explode" showHeader="true" header="DETALLE DE COMPRA"
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Nº de Compra:" />
+                            <p:outputLabel id="lblNumeroCompra" value="#{comprasBEAN.compra.idCompra}" />
+                            <p:outputLabel value="Nº de Factura:" />
+                            <p:outputLabel id="lblNumeroFactura" value="#{comprasBEAN.compra.facturaCompra}"/>
+                            <p:outputLabel value="Nº de Recibo:" />
+                            <p:outputLabel id="lblNumeroRecibo" value="#{comprasBEAN.compra.numeroRecibo}"/>
+                            <p:outputLabel value="Fecha:" />
+                            <p:outputLabel id="lblFechaCompra" value="#{comprasBEAN.compra.fechaCompra}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Proveedor:" />
+                            <p:outputLabel id="lblNombreProveedor" value="#{comprasBEAN.compra.proveedor.nombre}" />
+                            <p:outputLabel value="Tipo de Compra:" />
+                            <p:outputLabel id="lblTipoCompra" value="#{comprasBEAN.compra.tipopago.descPago}" />
+                            <p:outputLabel value="Estado:" />
+                            <p:outputLabel id="lblEstado" value="#{comprasBEAN.compra.estado}"/> 
+                            <p:outputLabel value="Observaciones:" />
+                             <p:outputLabel id="lblObservaciones" value="#{comprasBEAN.compra.observacionCompra}"/>
+                              
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:dataTable id="tblDetalleCompra" var="det" value="#{comprasBEAN.listaDetallecompraFormateada}" emptyMessage="No hay datos de artículos en el detalle de compra"       
+                                     style="width:1000px;" >
+                            <p:column  headerText="Codigo" style="width: 70px;">  
+                                <h:outputText  value="#{det.codigoArticulo}" />                  
+                            </p:column>		
+                            <p:column  headerText="Nombre" style="width: 300px;">  
+                                <h:outputText value="#{det.nombreArticulo}" />                  
+                            </p:column>			
+                            <p:column  headerText="Descripcion" >  
+                                <h:outputText value="#{det.descripcion}"/>                  
+                            </p:column>
+                            <p:column  headerText="Cantidad" style="width: 60px; text-align: center">  
+                                <h:outputText value="#{det.cantidad}" />
+                            </p:column>
+                            <p:column  headerText="Costo Unitario" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{det.costoUnitario}" />                 
+                            </p:column>
+                            <p:column  headerText="Costo Total" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{det.costoTotal}" />                  
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalCompra" columns="2">
+                            <p:outputLabel value="TOTAL: Bs." style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+                            <p:outputLabel id="lblTotalCompra" value="#{comprasBEAN.compra.montoCompra}" style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+
+                        </h:panelGrid>
+                        
+                        <p:commandButton value="Cerrar" immediate="true" oncomplete="PF('dialogVerDetalleCompra').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formAnularCompra">
+                    <p:dialog id="dlgAnularCompra" widgetVar="dialogAnularCompra" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Anular Compra">
+                        <h:outputText value="Esta seguro de anular la compra? " />
+                        <p:commandButton value="Si" actionListener="#{comprasBEAN.anularCompra()}" update=":formAdministrarCompra:tblCompras" 
+                                         oncomplete="PF('dialogAnularCompra').hide()" />
+                        <p:commandButton value="No" immediate="true" oncomplete="PF('dialogAnularCompra').hide();" />
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

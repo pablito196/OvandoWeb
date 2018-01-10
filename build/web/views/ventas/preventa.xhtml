@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Pre venta</h2>
+
+                <h:form>
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray" >
+                        <p:commandButton value="Nueva Preventa" actionListener="#{preventaBEAN.numeracionPreVenta()}"
+                                         update=":formPreVenta" action="#{preventaBEAN.enabledButton()}"/>
+                    </h:panelGrid>
+                </h:form>
+
+                <h:form id="formPreVenta">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 900px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosPreVenta" style="width: 100%; height: 135px;" >
+                            <p:layoutUnit id="datosCliente" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+
+                                <h:panelGrid id="gridBuscarDatosCliente" columns="5">
+                                    <p:outputLabel value="NIT/CI:" style="font-weight: bold;"/>
+                                    <p:inputText value="#{preventaBEAN.ciCliente}" size="12" 
+                                                 disabled="#{!preventaBEAN.enabled}"
+                                                 >
+                                        <p:ajax event="keyup" listener="#{preventaBEAN.agregarDatosClientetxtciCliente()}"
+                                                update=":formPreVenta:gridDatosCliente" />
+                                    </p:inputText>
+                                    <p:commandButton value="..." oncomplete="PF('dialogClientes').show();"
+                                                     update=":formPreVenta:dlgClientes"
+                                                     disabled="#{!preventaBEAN.enabled}" 
+                                                     />
+                                    <p:outputLabel value="Fecha:" style="font-weight: bold;"/>
+                                    <p:outputLabel value="#{preventaBEAN.fechaSistema}" style="font-weight: bold;"/>
+                                </h:panelGrid>
+                                <p:separator/>
+                                <h:panelGrid id="gridDatosCliente"  columns="2">
+                                    <p:outputLabel value="Nombres / Razón Social:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblNombreCliente" value="#{preventaBEAN.cliente.nombresCliente}" />
+                                    <p:outputLabel value="Dirección:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblDireccionCliente" value="#{preventaBEAN.cliente.direccion}" />
+                                    <p:outputLabel value="Teléfono:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblTelefonoCliente" value="#{preventaBEAN.cliente.telefono}" />
+                                </h:panelGrid>
+
+                            </p:layoutUnit>
+                            <p:layoutUnit id="datosPreventa" position="east" style="padding: 5px; text-align: center; 
+                                          font-size: 14px;" size="200">
+                                <p:panelGrid columns="1" style="font-size: 18px; font-weight: bold; margin-top: 30px; margin: 0 auto">
+                                    Pre venta
+                                    <p:outputLabel value="#{preventaBEAN.numeroPreVenta}"/>
+                                    Tipo de cambio
+                                    <p:outputLabel value="6.96"/>
+                                </p:panelGrid>
+                            </p:layoutUnit>
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:panelGrid id="gridBuscarArticulo" columns="3" >
+                            <p:outputLabel value="Codigo Artículo:" />
+                            <p:inputText id="txtBuscarArticuloCodigoArticulo" value="#{preventaBEAN.codigoArticulo}" size="15" disabled="#{!preventaBEAN.enabled}">
+                                <p:ajax event="keyup" listener="#{preventaBEAN.mostrarCantidadArticuloporCodigo()}" 
+                                        update=":formPreVenta:dlgCantidadArticuloporCodigo"/>
+                            </p:inputText>
+                            <p:commandButton value="..."  oncomplete="PF('dialogArticulos').show();"
+                                             update=":formPreVenta:dlgArticulos" disabled="#{!preventaBEAN.enabled}"/>
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:dataTable id="tablaArticulosPreVenta" var="item" value="#{preventaBEAN.listaDetallepreventa}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No se registraron artículos en el detalle de preventa">
+
+                            <p:ajax event="rowEdit" listener="#{preventaBEAN.onRowEdit}" update=":formPreVenta:tablaArticulosPreVenta :formPreVenta:gridTotalPreventa" />
+                            <p:ajax event="rowEditCancel" listener="#{preventaBEAN.onRowCancel}" update=":formPreVenta:tablaArticulosPreVenta :formPreVenta:gridTotalPreventa" />
+
+                            <p:column  headerText="Codigo" style="width: 80px; text-align: center">  
+                                <h:outputText  value="#{item.articulo.codigoArticulo}" />                  
+                            </p:column>		
+                            <p:column  headerText="Nombre" >  
+                                <h:outputText value="#{item.articulo.nombre}" />                  
+                            </p:column>			
+                            <p:column  headerText="Descripción" >  
+                                <h:outputText value="#{item.articulo.descripcion}"/>                  
+                            </p:column>
+                            <p:column  headerText="Cantidad"  style="width: 60px; text-align: center">  
+                                <p:cellEditor>
+
+                                    <f:facet name="output">
+                                        <h:outputText value="#{item.cantidad}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.cantidad}" label="Cantidad Articulo"
+                                                     required="true" requiredMessage="Se requiere una cantidad"
+                                                     converter="#{Float}" converterMessage="La cantidad no es correcta"
+                                                     validatorMessage="La cantidad debe ser mayo a cero">
+                                            <f:validateLongRange minimum="1" />
+                                        </p:inputText>
+                                    </f:facet>
+
+
+                                </p:cellEditor>
+
+                            </p:column>
+                            <p:column  headerText="Precio Unitario" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{item.precioVentaReal}" />                 
+                            </p:column>
+                            <p:column  headerText="Total" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{item.total}" />                  
+                            </p:column>
+                            <p:column  headerText="Editar Cantidad" style="width: 60px; text-align: center">  
+                                <p:rowEditor/>
+                            </p:column>
+                            <p:column  headerText="Quitar Articulo" style="width: 60px; text-align: center">  
+                                <p:commandLink value="X" actionListener="#{preventaBEAN.quitarArticuloDetallePreventa(item.articulo.codigoArticulo, rowIndex)}"
+                                               title="Quitar Articulo" style="text-decoration: none; color: #000000"
+                                               update=":formPreVenta:tablaArticulosPreVenta :formPreVenta:gridTotalPreventa"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalPreventa" columns="2" style="font-size: 24px; margin: 0 auto;">
+                            <p:outputLabel value="TOTAL VENTA: Bs. "/>
+                            <p:outputLabel value="#{preventaBEAN.totalPreventa}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Observaciones: "/>
+                            <p:inputTextarea value="#{preventaBEAN.observaciones}" rows="2" cols="88" maxlength="100" autoResize="false" disabled="#{!preventaBEAN.enabled}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <p:commandButton value="Vender" actionListener="#{preventaBEAN.guardarPreventa()}"  oncomplete="PF('dialogFacturar').show();" update=":formPreVenta" disabled="#{!preventaBEAN.enabled}"/>
+                        <p:commandButton value="Cancelar" action="#{preventaBEAN.limpiarPreventa()}" update=":formPreVenta" disabled="#{!preventaBEAN.enabled}"/>
+                        
+                    </p:panel>
+                    <!--dialog para mostrar clientes -->
+                    <p:dialog id="dlgClientes" widgetVar="dialogClientes" modal="true" resizable="false"
+                              showEffect="explode" hideEffect="explode" >
+                        <p:dataTable id="tablaClientes" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="ct" value="#{clienteBEAN.listaClientes}" emptyMessage="No hay datos de clientes" rows="15" widgetVar=""  filteredValue="#{clienteBEAN.listaFiltradaClientes}">
+                            <p:column headerText="NIT/CI" filterBy="#{ct.ciCliente}" filterMatchMode="contains">
+                                <h:outputText value="#{ct.ciCliente}" />
+                            </p:column>
+                            <p:column headerText="Nombres / Razón Social" filterBy="#{ct.nombresCliente}" filterMatchMode="contains">
+                                <h:outputText value="#{ct.nombresCliente}" />
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandButton value="Seleccionar" actionListener="#{preventaBEAN.agregarDatosCliente(ct.ciCliente)}"  
+                                                 oncomplete="PF('dialogClientes').hide();" 
+                                                 update=":formPreVenta:gridDatosCliente"/>
+
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Cerrar" onclick="PF('dialogClientes').hide();" />
+                    </p:dialog>
+                    <!-- fin dialogClientes -->
+                    <!--Dialog para mostrar los  articulos-->
+                    <p:dialog id="dlgArticulos" widgetVar="dialogArticulos" modal="true" resizable="false" 
+                              showEffect="explode" hideEffect="explode">
+
+                        <p:dataTable id="tablaArticulos" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="art" value="#{articuloBEAN.listaArticulos}" emptyMessage="No hay datos de artículos" rows="10" widgetVar="articuloTable"  filteredValue="#{articuloBEAN.listaFiltradaArticulo}">
+                            <p:column headerText="Código" filterBy="#{art.codigoArticulo}" filterMatchMode="contains" style="width: 100px; text-align: center">
+                                <h:outputText id="txtCodigoTabla" value="#{art.codigoArticulo}" />
+                            </p:column>
+                            <p:column headerText="Nombre" filterBy="#{art.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{art.nombre}" />
+                            </p:column>
+                            <p:column  headerText="Descripcion" filterBy="#{art.descripcion}" filterMatchMode="contains">  
+                                <h:outputText value="#{art.descripcion} " />                  
+                            </p:column>
+                            <p:column  headerText="Precio Venta" style="width: 60px; text-align: right">  
+                                <h:outputText value="#{art.precioVenta} " />                  
+                            </p:column>
+
+                            <p:column headerText="" style="width: 60px; text-align: center">
+                                <p:commandButton value="Selec." actionListener="#{preventaBEAN.pedirCantidadProducto(art.codigoArticulo)}"
+                                                 oncomplete="PF('dialogCantidadArticulo').show();" update=":formPreVenta:dlgCantidadArticulo"/>
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:commandButton value="Cerrar" onclick="PF('dialogArticulos').hide();" />
+                    </p:dialog>
+
+                    <!-- fin dialogArticulos -->
+                    <!--dialog para pedir cantidad y precio de preventa -->
+                    <p:dialog id="dlgCantidadArticulo" widgetVar="dialogCantidadArticulo" header="Cantidad y Precio de Venta"
+                              modal="true">
+                        <h:outputText value="Listado de existencia del artículo por sucursales" style="font-weight: bold; font-size: 17px"/>
+                        <p:dataTable id="tablaSucursales" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="suc" value="#{preventaBEAN.listaExistenciaSucursal}" emptyMessage="No hay datos de sucursales" rows="5" widgetVar="sucursalTable">
+                            <p:column headerText="Sucursal" >
+                                <h:outputText value="#{suc.nombreSucursal}" />
+                            </p:column>
+                            <p:column headerText="Cantidad" >
+                                <h:outputText value="#{suc.cantidad}" />
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Precio de Unitario:" style="font-weight: bold; font-size: 14px"/>
+                            <p:selectOneRadio id="rbtPrecioUnitario" value="#{preventaBEAN.precioVentaReal}" columns="6" >
+                                <f:selectItem itemLabel="#{preventaBEAN.articulo.precioVenta}" itemValue="#{preventaBEAN.articulo.precioVenta}"/>
+                                <f:selectItem itemLabel="#{preventaBEAN.articulo.precioEspecial}" itemValue="#{preventaBEAN.articulo.precioEspecial}"/>
+                                <f:selectItem itemLabel="#{preventaBEAN.articulo.precioDocena}" itemValue="#{preventaBEAN.articulo.precioDocena}"/>
+                            </p:selectOneRadio>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Cantidad total existente:" style="font-weight: bold; font-size: 14px"/>
+                            <p:outputLabel value="#{preventaBEAN.articulo.cantidadExistente}" />
+                            <p:outputLabel value="Cantidad existente en la sucursal:" style="font-weight: bold; font-size: 14px"/>
+                            <p:outputLabel value="#{preventaBEAN.existenciaPorSucursal}" />
+                            <p:outputLabel value="Cantidad existente en almacen principal:" style="font-weight: bold; font-size: 14px"/>
+                            <p:outputLabel value="#{preventaBEAN.existenciaSalida.cantidad}" />
+                            <p:outputLabel value="Cantidad de artículos a vender: " style="font-weight: bold; font-size: 14px"/>
+                            <p:inputText id="txtCantidadArticulo" value="#{preventaBEAN.cantidadArticulo}" size="4"/>               
+                        </h:panelGrid>
+                        <p:commandButton value="Aceptar"  actionListener="#{preventaBEAN.agregarDatosArticulo()}"
+                                         update=":formPreVenta:tablaArticulosPreVenta :formPreVenta:dlgCantidadArticulo :formPreVenta:gridTotalPreventa"
+                                         oncomplete="PF('dialogCantidadArticulo').hide(); PF('dialogArticulos').hide(); " />
+                    </p:dialog>
+                    <!-- fin dialog cantidad articulo y preccio de venta-->
+                    
+                    <!--dialog para pedir cantidad y precio de preventa por txtcodigoarticulo-->
+                    <p:dialog id="dlgCantidadArticuloporCodigo" widgetVar="dialogCantidadArticuloporCodigo" header="Cantidad y Precio de Venta"
+                              modal="true">
+                        <h:outputText value="Listado de existencia del artículo por sucursales" style="font-weight: bold; font-size: 17px"/>
+                        <p:dataTable id="tablaSucursalesporCodigo" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="suc" value="#{preventaBEAN.listaExistenciaSucursal}" emptyMessage="No hay datos de sucursales" rows="5" widgetVar="sucursalTable">
+                            <p:column headerText="Sucursal" >
+                                <h:outputText value="#{suc.nombreSucursal}" />
+                            </p:column>
+                            <p:column headerText="Cantidad" >
+                                <h:outputText value="#{suc.cantidad}" />
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Precio de Unitario:"/>
+                            <p:selectOneRadio id="rbtPrecioUnitarioporArticulo" value="#{preventaBEAN.precioVentaRealporCodigo}" columns="6" >
+                                <p:outputLabel value="Precio Venta"/>
+                                <f:selectItem itemLabel="#{preventaBEAN.articulo.precioVenta}" itemValue="#{preventaBEAN.articulo.precioVenta}"/>
+                                <p:outputLabel value="Precio Especial" />
+                                <f:selectItem itemLabel="#{preventaBEAN.articulo.precioEspecial}" itemValue="#{preventaBEAN.articulo.precioEspecial}"/>
+                                <p:outputLabel value="Precio p/Mayor" />
+                                <f:selectItem itemLabel="#{preventaBEAN.articulo.precioDocena}" itemValue="#{preventaBEAN.articulo.precioDocena}"/>
+                            </p:selectOneRadio>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Cantidad total existente:" />
+                            <p:outputLabel value="#{preventaBEAN.articulo.cantidadExistente}" />
+                            <p:outputLabel value="Cantidad existente en la sucursal:" />
+                            <p:outputLabel value="#{preventaBEAN.existenciaPorSucursal}" />
+                            <p:outputLabel value="Cantidad existente en almacen principal:" />
+                            <p:outputLabel value="#{preventaBEAN.existenciaSalida.cantidad}" />
+                            <p:outputLabel value="Cantidad de artículos a vender: "/>
+                            <p:inputText id="txtCantidadArticuloporCodigo" value="#{preventaBEAN.cantidadArticuloporCodigo}" size="4"/>               
+                        </h:panelGrid>
+                        <p:commandButton value="Aceptar"  actionListener="#{preventaBEAN.agregarDatosArticulotxtcodigoArticulo()}"
+                                         update=":formPreVenta:tablaArticulosPreVenta :formPreVenta:dlgCantidadArticuloporCodigo :formPreVenta:gridTotalPreventa"
+                                         oncomplete="PF('dialogCantidadArticuloporCodigo').hide(); " />
+                    </p:dialog>
+                    <!-- fin dialog cantidad articulo y precio de venta por txtcodigoarticulo-->
+                    
+                    <p:dialog id="dlgFacturar" widgetVar="dialogFacturar" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Facturar">
+                        <h:outputText value="Desea emitir factura? " />
+                        <p:commandButton value="Si" actionListener="#{preventaBEAN.prepararDatosFactura()}" update=":formPreVenta:dlgDatosFactura" 
+                                         oncomplete="PF('dialogDatosFactura').show();" />
+                        <p:commandButton value="No" immediate="true" actionListener="#{preventaBEAN.limpiarPreventa()}" update=":formPreVenta" oncomplete="PF('dialogFacturar').hide();" />
+                    </p:dialog>
+                    
+                    <!--dialog para pedir datos para emitir factura-->
+                    <p:dialog id="dlgDatosFactura" widgetVar="dialogDatosFactura" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Datos para la factura">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="CI/NIT: " />
+                            <p:inputText value="#{preventaBEAN.nitFactura}" size="12" />
+                            <h:outputText value="Nombre/Razon Social: " />
+                            <p:inputText value="#{preventaBEAN.razonSocialFactura}" size="30" />
+                        </h:panelGrid>  
+
+                        <p:commandButton value="Facturar" immediate="true" actionListener="#{preventaBEAN.facturar()}" oncomplete="PF('dialogDatosFactura').hide(); PF('dialogFacturar').hide();" update=":formPreVenta" process="@this" />
+                        
+                        <p:commandButton value="Cancelar" immediate="true" actionListener="#{preventaBEAN.limpiarPreventa()}" update=":formPreVenta" oncomplete="PF('dialogDatosFactura').hide(); PF('dialogFacturar').hide();" />
+                        
+                        <p:commandButton value="Continua luego de imprimir" actionListener="#{preventaBEAN.reset()}" immediate="true" ajax="false" >
+                            <p:ajax update="formPreVenta" resetValues="true" />
+                        </p:commandButton>
+                    </p:dialog>
+                    <!--fin dialog pedir datos para emitir factura-->
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

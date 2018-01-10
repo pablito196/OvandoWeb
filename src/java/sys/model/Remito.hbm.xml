@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Remito" table="remito" catalog="ovandos" optimistic-lock="version">
+        <id name="numeroRemito" type="java.lang.Integer">
+            <column name="NumeroRemito" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="venta" class="sys.model.Venta" fetch="select">
+            <column name="NumeroVenta" not-null="true" />
+        </many-to-one>
+        <property name="totalRemito" type="big_decimal">
+            <column name="TotalRemito" precision="7" not-null="true" />
+        </property>
+        <property name="fechaRemito" type="timestamp">
+            <column name="FechaRemito" length="19" not-null="true" />
+        </property>
+        <property name="tipoRemito" type="string">
+            <column name="TipoRemito" length="20" not-null="true" />
+        </property>
+        <property name="fechaRecepcion" type="timestamp">
+            <column name="FechaRecepcion" length="19" />
+        </property>
+        <property name="nombreRecepcionista" type="string">
+            <column name="NombreRecepcionista" length="100" />
+        </property>
+    </class>
+</hibernate-mapping>

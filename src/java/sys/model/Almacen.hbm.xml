@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Almacen" table="almacen" catalog="ovandos" optimistic-lock="version">
+        <id name="idAlmacen" type="java.lang.Integer">
+            <column name="IdAlmacen" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="sucursal" class="sys.model.Sucursal" fetch="select">
+            <column name="IdSucursal" not-null="true" />
+        </many-to-one>
+        <property name="nombreAlmacen" type="string">
+            <column name="NombreAlmacen" length="100" not-null="true" />
+        </property>
+        <property name="principal" type="java.lang.Boolean">
+            <column name="Principal" />
+        </property>
+        <property name="estadoAlmacen" type="string">
+            <column name="EstadoAlmacen" length="15" />
+        </property>
+        <set name="existencias" table="existencia" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdAlmacen" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Existencia" />
+        </set>
+        <set name="compras" table="compra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdAlmacen" />
+            </key>
+            <one-to-many class="sys.model.Compra" />
+        </set>
+        <set name="estantes" table="estante" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdAlmacen" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Estante" />
+        </set>
+        <set name="preventas" table="preventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdAlmacen" />
+            </key>
+            <one-to-many class="sys.model.Preventa" />
+        </set>
+        <set name="ventas" table="venta" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdAlmacen" />
+            </key>
+            <one-to-many class="sys.model.Venta" />
+        </set>
+    </class>
+</hibernate-mapping>

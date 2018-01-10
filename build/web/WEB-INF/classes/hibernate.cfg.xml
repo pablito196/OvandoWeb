@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/ovandos?zeroDateTimeBehavior=convertToNull</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">1c0n37</property>
+    <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.format_sql">true</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <mapping resource="sys/model/Cuentabancaria.hbm.xml"/>
+    <mapping resource="sys/model/Detallefacturaanulada.hbm.xml"/>
+    <mapping resource="sys/model/Compra.hbm.xml"/>
+    <mapping resource="sys/model/Funcionalidad.hbm.xml"/>
+    <mapping resource="sys/model/Devolucion.hbm.xml"/>
+    <mapping resource="sys/model/Detalleventa.hbm.xml"/>
+    <mapping resource="sys/model/Detallecompra.hbm.xml"/>
+    <mapping resource="sys/model/Tipopago.hbm.xml"/>
+    <mapping resource="sys/model/Ciudad.hbm.xml"/>
+    <mapping resource="sys/model/Tipousuario.hbm.xml"/>
+    <mapping resource="sys/model/Pagoventascredito.hbm.xml"/>
+    <mapping resource="sys/model/Entrada.hbm.xml"/>
+    <mapping resource="sys/model/Cliente.hbm.xml"/>
+    <mapping resource="sys/model/Salida.hbm.xml"/>
+    <mapping resource="sys/model/Banco.hbm.xml"/>
+    <mapping resource="sys/model/Contacto.hbm.xml"/>
+    <mapping resource="sys/model/Gasto.hbm.xml"/>
+    <mapping resource="sys/model/Subcategoriaarticulo.hbm.xml"/>
+    <mapping resource="sys/model/Usuario.hbm.xml"/>
+    <mapping resource="sys/model/Cotizacion.hbm.xml"/>
+    <mapping resource="sys/model/Preventa.hbm.xml"/>
+    <mapping resource="sys/model/Acceso.hbm.xml"/>
+    <mapping resource="sys/model/Servicio.hbm.xml"/>
+    <mapping resource="sys/model/Tipomoneda.hbm.xml"/>
+    <mapping resource="sys/model/Estante.hbm.xml"/>
+    <mapping resource="sys/model/Pagocompracredito.hbm.xml"/>
+    <mapping resource="sys/model/Sucursal.hbm.xml"/>
+    <mapping resource="sys/model/Detallepreventa.hbm.xml"/>
+    <mapping resource="sys/model/Ingreso.hbm.xml"/>
+    <mapping resource="sys/model/Cronocomprascred.hbm.xml"/>
+    <mapping resource="sys/model/Dosificacion.hbm.xml"/>
+    <mapping resource="sys/model/Remito.hbm.xml"/>
+    <mapping resource="sys/model/Unidad.hbm.xml"/>
+    <mapping resource="sys/model/Empleado.hbm.xml"/>
+    <mapping resource="sys/model/Existencia.hbm.xml"/>
+    <mapping resource="sys/model/Ubicacion.hbm.xml"/>
+    <mapping resource="sys/model/Ventaservicio.hbm.xml"/>
+    <mapping resource="sys/model/Categoriaarticulo.hbm.xml"/>
+    <mapping resource="sys/model/Articulo.hbm.xml"/>
+    <mapping resource="sys/model/Almacen.hbm.xml"/>
+    <mapping resource="sys/model/Tipocambio.hbm.xml"/>
+    <mapping resource="sys/model/Ventafactura.hbm.xml"/>
+    <mapping resource="sys/model/Preventafactura.hbm.xml"/>
+    <mapping resource="sys/model/Factura.hbm.xml"/>
+    <mapping resource="sys/model/Proveedor.hbm.xml"/>
+    <mapping resource="sys/model/Venta.hbm.xml"/>
+    <mapping resource="sys/model/Pais.hbm.xml"/>
+    <mapping resource="sys/model/Cronoventascredito.hbm.xml"/>
+    <mapping resource="sys/model/Detallecotizacion.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

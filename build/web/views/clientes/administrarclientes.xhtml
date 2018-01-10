@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar Clientes</h2>
+
+                <h:form>
+                    <p:commandButton value="Nuevo Cliente" actionListener="#{categoriaBEAN.prepararNuevaCategoria()}"
+                                     oncomplete="PF('dialogNuevoCliente').show();" update="formNuevoCliente" />
+                </h:form>
+
+                <h:form id="formAdministrarClientes" >
+                    <p:dataTable id="tablaClientes" paginator="true" paginatorPosition="top" 
+                                 var="ct" value="#{clienteBEAN.listaClientes}" emptyMessage="No hay datos de clientes" rows="15" widgetVar=""  filteredValue="#{clienteBEAN.listaFiltradaClientes}">
+                        <p:column headerText="NIT/CI" filterBy="#{ct.ciCliente}" filterMatchMode="contains">
+                            <h:outputText value="#{ct.ciCliente}" />
+                        </p:column>
+                        <p:column headerText="Nombres / Razón Social" filterBy="#{ct.nombresCliente}" filterMatchMode="contains">
+                            <h:outputText value="#{ct.nombresCliente}" />
+                        </p:column>
+                        <p:column headerText="Dirección" filterBy="#{ct.direccion}" filterMatchMode="contains">
+                            <h:outputText value="#{ct.direccion}" />
+                        </p:column>
+                        <p:column headerText="Teléfono">
+                            <h:outputText value="#{ct.telefono}" />
+                        </p:column>
+                        <p:column headerText="Celular">
+                            <h:outputText value="#{ct.celular}" />
+                        </p:column>
+                        <p:column headerText="Correo electrónico">
+                            <h:outputText value="#{ct.correoElectronico}" />
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{ct.estado}" />
+                        </p:column>
+                        <p:column headerText="Modificar">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarCliente').show();" update="formModificarCliente">
+                                <f:setPropertyActionListener target="#{clienteBEAN.cliente}" value="#{ct}"/>
+                            </p:commandButton>
+
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevoCliente">
+                    <p:dialog id="dlNuevoCliente" widgetVar="dialogNuevoCliente" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="NIT/CI:" />
+                            <p:inputText value="#{clienteBEAN.cliente.ciCliente}" />
+                            <p:outputLabel value="Nombres / Razón Social:" />
+                            <p:inputText value="#{clienteBEAN.cliente.nombresCliente}" />
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{clienteBEAN.cliente.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{clienteBEAN.cliente.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{clienteBEAN.cliente.celular}" />
+                            <p:outputLabel value="Correo electrónico:" />
+                            <p:inputText value="#{clienteBEAN.cliente.correoElectronico}" />
+                            <p:outputLabel for="estado" value="Estado:" />
+                            <p:selectOneMenu id="estado" value="#{clienteBEAN.cliente.estado}" style="width:125px">
+                                <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO" />
+                                <f:selectItem itemLabel="INACTIVO" itemValue="INACTIVO" />
+                                
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{clienteBEAN.nuevoCliente()}" update=":formAdministrarClientes:tablaClientes" 
+                                         oncomplete="PF('dialogNuevoCliente').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoCliente').hide();" />
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formModificarCliente">
+                    <p:dialog id="dlModificarCliente" widgetVar="dialogModificarCliente" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="NIT/CI:" />
+                            <p:inputText value="#{clienteBEAN.cliente.ciCliente}" />
+                            <p:outputLabel value="Nombres / Razón Social:" />
+                            <p:inputText value="#{clienteBEAN.cliente.nombresCliente}" />
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{clienteBEAN.cliente.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{clienteBEAN.cliente.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{clienteBEAN.cliente.celular}" />
+                            <p:outputLabel value="Correo electrónico:" />
+                            <p:inputText value="#{clienteBEAN.cliente.correoElectronico}" />
+                            <p:outputLabel for="estado" value="Estado" />
+                            <p:selectOneMenu id="estado" value="#{clienteBEAN.cliente.estado}" style="width:125px">
+                                <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO" />
+                                <f:selectItem itemLabel="INACTIVO" itemValue="INACTIVO" />
+                                
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{clienteBEAN.actualizarCliente()}" update=":formAdministrarClientes:tablaClientes" 
+                                         oncomplete="PF('dialogModificarCliente').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarCliente').hide();" />
+                    </p:dialog>
+                </h:form>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar almacen</h2>
+                <h:form>
+                    <p:commandButton value="Nuevo Almacen" actionListener="#{almacenBEAN.prepararNuevoAlmacen()}"
+                                     oncomplete="PF('dialogNuevoAlmacen').show();" update="formNuevoAlmacen" />
+                </h:form>
+
+                <h:form id="formAdministrarAlmacen" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tablaAlmacenes" paginator="true" paginatorPosition="top" 
+                                 var="almac" value="#{almacenBEAN.listaAlmacenes}" emptyMessage="No hay datos de almacenes" rows="15">
+                        <p:column headerText="Sucursal">
+                            <h:outputText value="#{almac.sucursal.nombreSucursal}" />
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{almac.nombreAlmacen}" />
+                        </p:column>
+                        <p:column headerText="Principal">
+                            <h:outputText value="#{almac.principal}" />
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{almac.estadoAlmacen}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarAlmacen').show();" update="formModificarAlmacen">
+                                <f:setPropertyActionListener target="#{almacenBEAN.almacen}" value="#{almac}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Definir como principal" oncomplete="PF('dialogAlmacenPrincipal').show();"  update=":formAlmacenPrincipal">
+                                <f:setPropertyActionListener target="#{almacenBEAN.almacen}" value="#{almac}"/>
+                            </p:commandButton>
+
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevoAlmacen">
+                    <p:dialog id="dlgNuevoAlmacen" widgetVar="dialogNuevoAlmacen" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nuevo almacen">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Sucursal:" />
+                            <p:selectOneMenu id="cmbSucursal" value="#{almacenBEAN.idSucursal}" required="true" style="width:250px" requiredMessage="Se requiere sucursal">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{almacenBEAN.almacen.nombreAlmacen}" />
+
+                            <p:outputLabel for="estado" value="Estado:" />
+                            <p:selectOneMenu id="estado" value="#{almacenBEAN.almacen.estadoAlmacen}" style="width:125px">
+                                <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO" />
+                                <f:selectItem itemLabel="INACTIVO" itemValue="INACTIVO" />
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{almacenBEAN.nuevoAlmacen()}" update=":formAdministrarAlmacen:tablaAlmacenes" 
+                                         oncomplete="PF('dialogNuevoAlmacen').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoAlmacen').hide();" />
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formModificarAlmacen">
+                    <p:dialog id="dlgModificarAlmacen" widgetVar="dialogModificarAlmacen" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Modificar almacen">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Sucursal:" />
+                            <p:selectOneMenu id="cmbSucursal" value="#{almacenBEAN.idSucursal}" required="true" style="width:250px" requiredMessage="Se requiere sucursal">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{almacenBEAN.almacen.nombreAlmacen}" />
+                            <p:outputLabel for="estado" value="Estado:" />
+                            <p:selectOneMenu id="estado" value="#{almacenBEAN.almacen.estadoAlmacen}" style="width:125px">
+                                <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO" />
+                                <f:selectItem itemLabel="INACTIVO" itemValue="INACTIVO" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{almacenBEAN.actualizarAlmacen()}" update=":formAdministrarAlmacen:tablaAlmacenes" 
+                                         oncomplete="PF('dialogModificarAlmacen').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarAlmacen').hide();" />
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formAlmacenPrincipal">
+                    <p:dialog id="dlgAlmacenPrincipal" widgetVar="dialogAlmacenPrincipal" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Almacen Principal">
+                        <h:outputText value="Desea establecer este almacen como principal? " />
+                        <p:commandButton value="Si" actionListener="#{almacenBEAN.definirAlmacenPrincipal()}" update=":formAdministrarAlmacen:tablaAlmacenes" 
+                                         oncomplete="PF('dialogAlmacenPrincipal').hide()" />
+                        <p:commandButton value="No" immediate="true" oncomplete="PF('dialogAlmacenPrincipal').hide();" />
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

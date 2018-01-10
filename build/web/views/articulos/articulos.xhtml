@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar artículos</h2>
+
+                <h:form>
+                    <p:commandButton value="Nuevo Articulo" actionListener="#{articuloBEAN.prepararNuevoArticulo()}"
+                                     oncomplete="PF('dialogNuevoArticulo').show();" update="formNuevoArticulo" />
+                </h:form>
+
+
+                <h:form id="formAdministrarArticulo" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblArticulos" paginator="true" paginatorPosition="top" 
+                                 var="art" value="#{articuloBEAN.listaArticulos}" emptyMessage="No hay datos de artículos" rows="10" widgetVar="articuloTable"  filteredValue="#{articuloBEAN.listaFiltradaArticulo}">
+                        <p:column headerText="Código" filterBy="#{art.codigoArticulo}" filterMatchMode="contains">
+                            <h:outputText value="#{art.codigoArticulo}" />
+                        </p:column>
+                        <p:column headerText="Nombre" filterBy="#{art.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{art.nombre}" />
+                        </p:column>
+                        <p:column headerText="Categoria">
+                            <h:outputText value="#{art.subcategoriaarticulo.categoriaarticulo.nombreCategoria}" />
+                        </p:column>
+                        <p:column headerText="Subcategoria">
+                            <h:outputText value="#{art.subcategoriaarticulo.nombreSubCategoria}" />
+                        </p:column>
+                        <p:column headerText="Fabricante">
+                            <h:outputText value="#{art.fabricante}" />
+                        </p:column>
+                        <p:column headerText="Unidad">
+                            <h:outputText value="#{art.unidad.nombreUnidad}" />
+                        </p:column>
+                        <p:column headerText="Estado">
+                            <h:outputText value="#{art.estadoArticulo}" />
+                        </p:column>
+                        <p:column headerText="Cant. Exist.">
+                            <h:outputText value="#{art.cantidadExistente}" />
+                        </p:column>
+                        <p:column headerText="Cant. Min.">
+                            <h:outputText value="#{art.cantidadMinima}" />
+                        </p:column>
+                        <p:column headerText="Precio Venta">
+                            <h:outputText value="#{art.precioVenta}" />
+                        </p:column>
+                        <p:column headerText="Precio Especial">
+                            <h:outputText value="#{art.precioEspecial}" />
+                        </p:column>
+                        <p:column headerText="Precio p/Mayor">
+                            <h:outputText value="#{art.precioDocena}" />
+                        </p:column>
+                        <p:column headerText="Modificar">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarArticulo').show();" update="formModificarArticulo">
+                                <f:setPropertyActionListener target="#{articuloBEAN.articulo}" value="#{art}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevoArticulo">
+                    <p:dialog id="dlNuevoArticulo" widgetVar="dialogNuevoArticulo" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nuevo articulo">
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Código:" />
+                            <p:inputText value="#{articuloBEAN.articulo.codigoArticulo}" />
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{articuloBEAN.articulo.nombre}" size="50"/>
+                            
+                            <p:outputLabel value="Categoria:" />
+                            <p:selectOneMenu id="cmbCategoria" value="#{subcategoriaBEAN.idCategoria}" style="width:300px">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{categoriaBEAN.lstCategorias}" itemValue="#{categoriaBEAN.categoria.idCategoria}" itemLabel="#{categoriaBEAN.categoria.nombreCategoria}"/>
+                                <p:ajax update="cmbSubcategoria" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Sub categoria:" />
+                            <p:selectOneMenu id="cmbSubcategoria"  value="#{articuloBEAN.idSubcategoria}" required="true" requiredMessage="Se requiere Sub categoria" style="width:300px">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{subcategoriaBEAN.lstSubCategorias}" itemValue="#{subcategoriaBEAN.subcategoria.idSubcategoria}" itemLabel="#{subcategoriaBEAN.subcategoria.nombreSubCategoria}" />
+                            </p:selectOneMenu>
+                                
+                            
+                            <p:outputLabel value="Fabricante:" />
+                            <p:inputText value="#{articuloBEAN.articulo.fabricante}" />
+                            <p:outputLabel value="Unidad:" />
+                            <p:selectOneMenu id="cmbUnidad"  value="#{articuloBEAN.idUnidad}" required="true" requiredMessage="Se requiere la unidad de medida" style="width:150px">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{unidadBEAN.lstUnidades}" itemValue="#{unidadBEAN.unidad.idUnidad}" itemLabel="#{unidadBEAN.unidad.sigla}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Estado:" />
+                            <p:selectOneMenu id="estado" value="#{articuloBEAN.articulo.estadoArticulo}" style="width:125px">
+                                <f:selectItem itemLabel="DISPONIBLE" itemValue="DISPONIBLE" />
+                                <f:selectItem itemLabel="NO DISPONIBLE" itemValue="NO DISPONIBLE" />
+                                
+                            </p:selectOneMenu>
+                            
+                        </p:panelGrid>
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Cant. Existente:" />
+                            <p:inputText value="#{articuloBEAN.articulo.cantidadExistente}" size="5"/>
+                            <p:outputLabel value="Cant. Minima:" />
+                            <p:inputText value="#{articuloBEAN.articulo.cantidadMinima}" size="5"/>
+                        </p:panelGrid>
+                        <p:panelGrid columns="6" style="margin: 0 auto">
+                            <p:outputLabel value="Precio Venta:" />
+                            <p:inputText value="#{articuloBEAN.articulo.precioVenta}"  size="5"/>
+                            <p:outputLabel value="Precio Especial:" />
+                            <p:inputText value="#{articuloBEAN.articulo.precioEspecial}" size="5"/>
+                            <p:outputLabel value="Precio p/mayor:" />
+                            <p:inputText value="#{articuloBEAN.articulo.precioDocena}"  size="5"/>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" style="margin: 0 auto">
+                            <p:outputLabel value="Descripción:" />
+                            <p:inputTextarea value="#{articuloBEAN.articulo.descripcion}" rows="3" cols="100" maxlength="100" autoResize="false"/>
+                        </p:panelGrid>
+                        <p:commandButton value ="Guardar" actionListener="#{articuloBEAN.nuevoArticulo()}" update=":formAdministrarArticulo:tblArticulos" 
+                                         oncomplete="PF('dialogNuevoArticulo').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoArticulo').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarArticulo">
+                    <p:dialog id="dlModificarArticulo" widgetVar="dialogModificarArticulo" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Código:" />
+                            <p:inputText value="#{articuloBEAN.articulo.codigoArticulo}" />
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{articuloBEAN.articulo.nombre}" size="50"/>
+                            
+                            <p:outputLabel value="Categoria:" />
+                            <p:selectOneMenu id="cmbCategoria" value="#{subcategoriaBEAN.idCategoria}" style="width:300px">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{categoriaBEAN.lstCategorias}" itemValue="#{categoriaBEAN.categoria.idCategoria}" itemLabel="#{categoriaBEAN.categoria.nombreCategoria}"/>
+                                <p:ajax update="cmbSubcategoria" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Sub categoria:" />
+                            <p:selectOneMenu id="cmbSubcategoria"  value="#{articuloBEAN.idSubcategoria}" required="true" requiredMessage="Se requiere Sub categoria" style="width:300px">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{subcategoriaBEAN.lstSubCategorias}" itemValue="#{subcategoriaBEAN.subcategoria.idSubcategoria}" itemLabel="#{subcategoriaBEAN.subcategoria.nombreSubCategoria}" />
+                            </p:selectOneMenu>
+                            
+                               
+                            
+                            <p:outputLabel value="Fabricante:" />
+                            <p:inputText value="#{articuloBEAN.articulo.fabricante}" />
+                            <p:outputLabel value="Unidad:" />
+                            <p:selectOneMenu id="cmbUnidad"  value="#{articuloBEAN.idUnidad}" required="true" requiredMessage="Se requiere la unidad de medida" style="width:300px">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{unidadBEAN.lstUnidades}" itemValue="#{unidadBEAN.unidad.idUnidad}" itemLabel="#{unidadBEAN.unidad.sigla}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Estado:" />
+                            <p:selectOneMenu id="estado" value="#{articuloBEAN.articulo.estadoArticulo}" style="width:125px">
+                                <f:selectItem itemLabel="DISPONIBLE" itemValue="DISPONIBLE" />
+                                <f:selectItem itemLabel="NO DISPONIBLE" itemValue="NO DISPONIBLE" />
+                                
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Cant. Existente:" />
+                            <p:inputText value="#{articuloBEAN.articulo.cantidadExistente}" size="5"/>
+                            <p:outputLabel value="Cant. Minima:" />
+                            <p:inputText value="#{articuloBEAN.articulo.cantidadMinima}" size="5"/>
+                        </p:panelGrid>
+                        <p:panelGrid columns="6" style="margin: 0 auto">
+                            <p:outputLabel value="Precio Venta:" />
+                            <p:inputText value="#{articuloBEAN.articulo.precioVenta}" size="5"/>
+                            <p:outputLabel value="Precio Especial:" />
+                            <p:inputText value="#{articuloBEAN.articulo.precioEspecial}" size="5"/>
+                            <p:outputLabel value="Precio p/mayor:" />
+                            <p:inputText value="#{articuloBEAN.articulo.precioDocena}" size="5"/>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" style="margin: 0 auto">
+                            <p:outputLabel value="Descripción:" />
+                            <p:inputTextarea value="#{articuloBEAN.articulo.descripcion}" rows="3" cols="100" maxlength="100" autoResize="false"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{articuloBEAN.actualizarArticulo()}" update="formAdministrarArticulo:tblArticulos" 
+                                         oncomplete="PF('dialogModificarArticulo').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarArticulo').hide();" />
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

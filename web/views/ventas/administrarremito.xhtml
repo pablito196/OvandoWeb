@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar remito</h2>
+                <h:form id="formAdministrarRemito" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblRemitos" paginator="true" paginatorPosition="top" 
+                                 var="remito" value="#{remitoBEAN.listaRemitos}" emptyMessage="No hay datos de remitos" rows="15" filteredValue="#{remitoBEAN.listaFiltradaRemitos}">
+                        <p:column headerText="Nº Remito" filterBy="#{remito.numeroRemito}" filterMatchMode="contains">
+                            <h:outputText value="#{remito.numeroRemito}" />
+                        </p:column>
+                        <p:column headerText="Nº Venta" filterBy="#{remito.venta.numeroVenta}" filterMatchMode="contains">
+                            <h:outputText value="#{remito.venta.numeroVenta}" />
+                        </p:column>
+                        <p:column headerText="Fecha" filterBy="#{remito.fechaRemito}" filterMatchMode="contains">
+                            <h:outputText value="#{remito.fechaRemito}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Cliente" filterBy="#{remito.venta.cliente.nombresCliente}" filterMatchMode="contains">
+                            <h:outputText value="#{remito.venta.cliente.nombresCliente}" />
+                        </p:column>
+                        <p:column headerText="Tipo remito" filterBy="#{remito.tipoRemito}" filterMatchMode="contains">
+                            <h:outputText value="#{remito.tipoRemito}" />
+                        </p:column>
+                        <p:column headerText="Recibido por" filterBy="#{remito.nombreRecepcionista}" filterMatchMode="contains">
+                            <h:outputText value="#{remito.nombreRecepcionista}" />
+                        </p:column>
+                        <p:column headerText="Total">
+                            <h:outputText value="#{remito.totalRemito}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Registrar entrega" oncomplete="PF('dialogRegistrarEntrega').show();" update=":formRegistrarEntrega">
+                                <f:setPropertyActionListener target="#{remitoBEAN.remito}" value="#{remito}"/>    
+                            </p:commandButton>
+                        </p:column>
+                        
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Detalle" oncomplete="PF('dialogVerDetalleRemito').show();" update=":formVerDetalleRemito">
+                                <f:setPropertyActionListener target="#{remitoBEAN.remito}" value="#{remito}"/>
+                            </p:commandButton>
+                        </p:column>
+                        
+                        <p:column headerText="Ver remito" style="width: 60px; text-align: center">
+                            <h:commandLink id="btnImprimir"  action="#{remitoBEAN.verRemito()}" title="Permite visualizar e imprimir un remito" target="_blank">
+                            <f:setPropertyActionListener target="#{remitoBEAN.remito}" value="#{remito}"/>
+                                <p:graphicImage style="width:25px" url="/resources/images/preview.png"/>
+
+                        </h:commandLink>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formVerDetalleRemito">
+                    <p:dialog id="dlgVerDetalleRemito" widgetVar="dialogVerDetalleRemito" resizable="false" showEffect="explode" showHeader="true" header="DETALLE DE REMITO"
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Nº de Remito: " />
+                            <p:outputLabel id="lblNumeroRemito" value="#{remitoBEAN.remito.numeroRemito}" />
+                            <p:outputLabel value="Nº de Venta: " />
+                            <p:outputLabel id="lblNumeroVenta" value="#{remitoBEAN.remito.venta.numeroVenta}"/>
+                            <p:outputLabel value="Fecha de envío: " />
+                            <p:outputLabel id="lblFechaEnvio" value="#{remitoBEAN.remito.fechaRemito}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Fecha de recepción: " />
+                            <p:outputLabel id="lblFechaRecepcion" value="#{remitoBEAN.remito.fechaRecepcion}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            <p:outputLabel value="Cliente: " />
+                            <p:outputLabel id="lblNombreCliente" value="#{remitoBEAN.remito.venta.cliente.nombresCliente}" />
+                            <p:outputLabel value="Vendedor: " />
+                            <p:outputLabel id="lblNombreVendedor" value="#{remitoBEAN.remito.venta.usuario.empleado.nombresEmpleado} #{remitoBEAN.remito.venta.usuario.empleado.apellidoPaterno} #{remitoBEAN.remito.venta.usuario.empleado.apellidoMaterno}" />
+                            <p:outputLabel value="Recibido por: " />
+                            <p:outputLabel id="lblRecepcionista" value="#{remitoBEAN.remito.nombreRecepcionista}"/> 
+                            <p:outputLabel value="Tipo de remito: " />
+                            <p:outputLabel id="lblTipoRemito" value="#{remitoBEAN.remito.tipoRemito}"/>
+
+                        </p:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalRemito" columns="2">
+                            <p:outputLabel value="TOTAL: Bs." style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+                            <p:outputLabel id="lblTotalRemito" value="#{remitoBEAN.remito.venta.montoTotal}" style="font-weight: bold; font-size: 24px; margin: 0 auto; "/>
+
+                        </h:panelGrid>
+
+                        <p:commandButton value="Cerrar" immediate="true" oncomplete="PF('dialogVerDetalleRemito').hide();" />
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formRegistrarEntrega">
+                    <p:dialog id="dlgRegistrarEntrega" widgetVar="dialogRegistrarEntrega" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registrar entrega">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel for="cdfechaRecepcion" value="Fecha de Recepción:" />
+                            <p:calendar id="cdfechaRecepcion" value="#{remitoBEAN.remito.fechaRecepcion}" locale="en" navigator="true" pattern="yyyy-MMM-dd"  size="15"/>    
+                            <p:outputLabel value="Recibido por:" />
+                            <p:inputText value="#{remitoBEAN.remito.nombreRecepcionista}"/>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Registrar" actionListener="#{remitoBEAN.actualizarRemito()}" update=":formAdministrarRemito:tblRemitos" 
+                                         oncomplete="PF('dialogRegistrarEntrega').hide()" />
+                        <p:commandButton value="Cerrar" immediate="true" oncomplete="PF('dialogRegistrarEntrega').hide();"/>
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

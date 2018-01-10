@@ -1,0 +1,166 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Informe de ingresos y egresos</h2>
+                <h:form id="formInformeIngresosEgresos">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 1130px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosInformeIngresosEgresos" style="width: 100%; height: 150px;" >
+                            <p:layoutUnit id="fechas" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+
+                                <h:panelGrid id="gridFechas" columns="2">
+                                    <p:outputLabel for="cdfechaInicio" value="Desde:" style="font-weight: bold;"/>
+                                    <p:calendar id="cdfechaInicio" value="#{ingresosEgresosBEAN.fechaInicio}" locale="es" navigator="true" pattern="yyyy-MMM-dd"  size="15" required="true" requiredMessage="Seleccione fecha de inicio"/>    
+                                    <p:outputLabel for="cdfechaFin" value="Hasta:" style="font-weight: bold;"/>
+                                    <p:calendar id="cdfechaFin" value="#{ingresosEgresosBEAN.fechaFin}" locale="es" navigator="true" pattern="yyyy-MMM-dd"  size="15" required="true" requiredMessage="Seleccione fecha final"/>
+
+                                    <p:outputLabel for="cmbSucursal" value="Sucursal:" />
+                                    <p:selectOneMenu id="cmbSucursal" value="#{ingresosEgresosBEAN.idSucursal}" required="true" style="width:250px" requiredMessage="Seleccione la sucursal" label="sucursal">
+                                        <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                        <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:commandButton value="Buscar" actionListener="#{ingresosEgresosBEAN.buscar()}" update=":formInformeIngresosEgresos:tablaIngresosEgresos :formInformeIngresosEgresos:gridTotales :formInformeIngresosEgresos:gridTotalEfectivo"/>
+                                </h:panelGrid>
+
+
+                            </p:layoutUnit>
+
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:dataTable id="tablaIngresosEgresos" var="item" value="#{ingresosEgresosBEAN.lstIngresosEgresos}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No existen datos de ingresos y egresos">
+
+                            <f:facet name="{Exporters}">
+                                <h:commandLink>
+                                    <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                                    <p:dataExporter type="pdf" target="tablaIngresosEgresos" fileName="IngresosEgresos" />
+                                </h:commandLink>
+
+                            </f:facet>
+
+                            <p:column >
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha" />
+                                </f:facet>
+                                <h:outputText value="#{item.fecha}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                 
+                            </p:column>
+
+                            <p:column  style="width: 400px; text-align: left">  
+                                <f:facet name="header">
+                                    <h:outputText value="Concepto" />
+                                </f:facet>
+                                <h:outputText  value="#{item.concepto}" />                  
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Ventas" />
+                                </f:facet>
+                                <h:outputText value="#{item.ventas}" />                  
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Cobros" />
+                                </f:facet>
+                                <h:outputText value="#{item.cobros}" />                  
+                            </p:column>
+
+
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Total" />
+                                </f:facet>
+                                <h:outputText value="#{item.totalIngresos}" />                 
+                            </p:column>
+
+
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Compras" />
+                                </f:facet>
+                                <h:outputText value="#{item.compras}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Gastos" />
+                                </f:facet>
+                                <h:outputText value="#{item.gastos}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Total" />
+                                </f:facet>
+                                <h:outputText value="#{item.totalEgresos}" />                 
+                            </p:column>
+
+
+
+                        </p:dataTable>
+
+                        <p:separator/>
+                        <h:panelGrid id="gridTotales" columns="8" style="font-size: 20px; margin: 0 auto;">
+                            <p:outputLabel value="TOTAL VENTAS: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalVentas}"/>
+                            <p:outputLabel value="   --  "/>
+                            <p:outputLabel value="TOTAL COBROS: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalCobros}"/>
+                            <p:outputLabel value=" -- "/>
+                            <p:outputLabel value="TOTAL INGRESOS: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalIngresos}"/>
+                            <p:outputLabel value="TOTAL COMPRAS: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalCompras}"/>
+                            <p:outputLabel value=" -- "/>
+                            <p:outputLabel value="TOTAL GASTOS: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalGastos}"/>
+                            <p:outputLabel value=" -- "/>
+                            <p:outputLabel value="TOTAL EGRESOS: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalEgresos}"/>
+                        </h:panelGrid>
+
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalEfectivo" columns="2" style="font-size: 24px; margin: 0 auto;">
+                            <p:outputLabel value="TOTAL EFECTIVO: "/>
+                            <p:outputLabel value="#{ingresosEgresosBEAN.totalEfectivo}"/>
+
+                        </h:panelGrid>
+                        <h:commandLink id="pdf" >
+                            <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                            <p:dataExporter type="pdf" target="tablaIngresosEgresos" fileName="IngresosEgresos" />
+                        </h:commandLink>
+
+                        <h:commandLink id="btnImprimir"  actionListener="#{ingresosEgresosBEAN.verReporte()}" title="Vista previa">
+                            <p:graphicImage style="width:25px" url="/resources/images/Impresora.png"/>
+
+                        </h:commandLink>
+
+
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

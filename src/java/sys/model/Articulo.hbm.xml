@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Articulo" table="articulo" catalog="ovandos" optimistic-lock="version">
+        <id name="codigoArticulo" type="string">
+            <column name="CodigoArticulo" length="20" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="subcategoriaarticulo" class="sys.model.Subcategoriaarticulo" fetch="select">
+            <column name="IdSubCategoria" not-null="true" />
+        </many-to-one>
+        <many-to-one name="unidad" class="sys.model.Unidad" fetch="select">
+            <column name="IdUnidad" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="nombre" type="string">
+            <column name="Nombre" length="80" not-null="true" />
+        </property>
+        <property name="descripcion" type="string">
+            <column name="Descripcion" length="300" />
+        </property>
+        <property name="fabricante" type="string">
+            <column name="Fabricante" length="80" />
+        </property>
+        <property name="cantidadMinima" type="java.lang.Float">
+            <column name="CantidadMinima" precision="7" />
+        </property>
+        <property name="cantidadExistente" type="java.lang.Float">
+            <column name="CantidadExistente" precision="7" />
+        </property>
+        <property name="estadoArticulo" type="string">
+            <column name="EstadoArticulo" length="20" not-null="true" />
+        </property>
+        <property name="precioVenta" type="big_decimal">
+            <column name="PrecioVenta" precision="7" />
+        </property>
+        <property name="precioDocena" type="big_decimal">
+            <column name="PrecioDocena" precision="7" />
+        </property>
+        <property name="precioEspecial" type="big_decimal">
+            <column name="PrecioEspecial" precision="7" />
+        </property>
+        <property name="imagen" type="binary">
+            <column name="Imagen" />
+        </property>
+        <set name="detallecotizacions" table="detallecotizacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detallecotizacion" />
+        </set>
+        <set name="detallepreventas" table="detallepreventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detallepreventa" />
+        </set>
+        <set name="salidas" table="salida" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Salida" />
+        </set>
+        <set name="existencias" table="existencia" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Existencia" />
+        </set>
+        <set name="detallecompras" table="detallecompra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detallecompra" />
+        </set>
+        <set name="ubicacions" table="ubicacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Ubicacion" />
+        </set>
+        <set name="devolucions" table="devolucion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Devolucion" />
+        </set>
+        <set name="entradas" table="entrada" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Entrada" />
+        </set>
+        <set name="detalleventas" table="detalleventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CodigoArticulo" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detalleventa" />
+        </set>
+    </class>
+</hibernate-mapping>

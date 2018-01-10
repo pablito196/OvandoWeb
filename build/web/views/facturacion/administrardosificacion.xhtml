@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar Dosificación</h2>
+                <h:form>
+                    <p:commandButton value="Nueva Dosificación" actionListener="#{dosificacionBEAN.prepararNuevaDosificacion()}"
+                                     oncomplete="PF('dialogNuevaDosificacion').show();" update="formNuevaDosificacion" />
+                </h:form>
+                <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                <h:form id="formAdministrarDosificacion" >
+                    <p:dataTable id="tblDosificacion" paginator="true" paginatorPosition="top" 
+                                 var="dosif" value="#{dosificacionBEAN.listaDosificaciones}" emptyMessage="No hay datos de dosificaciones" rows="15">
+                        <p:column headerText="Nº Autorización" style="width: 100px; text-align: center">
+                            <h:outputText value="#{dosif.numeroAutorizacion}" />
+                        </p:column>
+                        <p:column headerText="Fecha límite de emisión" style="width: 100px; text-align: center">
+                            <h:outputText value="#{dosif.fechaLimiteEmision}" />
+                        </p:column>
+                        <p:column headerText="Nº Inicial de factura" style="width: 100px; text-align: center">
+                            <h:outputText value="#{dosif.numeroInicialFactura}" />
+                        </p:column>
+                        <p:column headerText="Tiempo de alerta" style="width: 100px; text-align: center">
+                            <h:outputText value="#{dosif.tiempoAlerta}" /> días
+                        </p:column>
+                        <p:column headerText="Estado" style="width: 100px; text-align: center">
+                            <h:outputText value="#{dosif.estado}" />
+                        </p:column>
+                        <p:column headerText="Leyenda" style="width: 150px; text-align: center">
+                            <h:outputText value="#{dosif.texto}" />
+                        </p:column>
+                         <p:column headerText="Sucursal" style="width: 100px; text-align: center">
+                             <h:outputText value="#{dosif.sucursal.nombreSucursal}" />
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevaDosificacion">
+                    <p:dialog id="dlNuevaDosificacion" widgetVar="dialogNuevaDosificacion" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Nueva dosificación">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nº de Autorización:" />
+                            <p:inputText value="#{dosificacionBEAN.dosificacion.numeroAutorizacion}" required="true" requiredMessage="Escriba el número de autorizacion"/>
+                            <p:outputLabel value="Nº inicial de factura:" />
+                            <p:inputText value="#{dosificacionBEAN.dosificacion.numeroInicialFactura}" required="true" requiredMessage="Escriba el número inicial de factura"/>
+                            <p:outputLabel for="cdfechaLimiteEmision" value="Fecha límite de emisión:" />
+                            <p:calendar id="cdfechaLimiteEmision" value="#{dosificacionBEAN.dosificacion.fechaLimiteEmision}" locale="de" navigator="true" pattern="yyyy-MMM-dd" required="true" 
+                                        requiredMessage="Seleccione la fecha limite de emisión"/>
+                            <p:outputLabel value="Llave de dosificación:" />
+                            <p:inputText value="#{dosificacionBEAN.dosificacion.llaveDosificacion}" required="true" requiredMessage="Escriba la llave de dosificación"/>
+                            <p:outputLabel value="Tiempo de Alerta (dias):" />
+                            <p:inputText value="#{dosificacionBEAN.dosificacion.tiempoAlerta}" required="true" requiredMessage="Escriba tiempo de alerta"/>
+                            <p:outputLabel for="cmbSucursal" value="Sucursal:" />
+                            <p:selectOneMenu id="cmbSucursal" value="#{dosificacionBEAN.idSucursal}" required="true" style="width:250px" requiredMessage="Seleccione la sucursal" label="sucursal">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Leyenda a incluir en la facturación:" />
+                            <p:inputText value="#{dosificacionBEAN.dosificacion.texto}" required="true" requiredMessage="Escriba la leyenda a incluir en la facturación" size="50"/>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{dosificacionBEAN.nuevaDosificacion()}" update=":formAdministrarDosificacion:tblDosificacion" 
+                                         oncomplete="PF('dialogNuevaDosificacion').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevaDosificacion').hide();" />
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+
+    </body>
+</html>

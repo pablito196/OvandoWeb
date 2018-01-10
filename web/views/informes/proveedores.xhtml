@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Informe de proveedores</h2>
+                <h:form id="formInformeProveedores">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 950px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosInformeProveedores" style="width: 100%; height: 240px;" >
+                            <p:layoutUnit id="datosProveedor" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+
+                                <h:panelGrid id="gridChekBoxProveedores" columns="3">
+                                    <p:outputLabel value="Todos los proveedores" style="font-weight: bold;"/>
+                                    <p:selectBooleanCheckbox value="#{proveedorBEAN.todosLosProveedores}">
+                                        <p:ajax  update=":formInformeProveedores:gridDatosProveedorCiudad :formInformeProveedores:gridDatosProveedorCategoria :formInformeProveedores:gridDatosProveedorArticulo" listener="#{proveedorBEAN.activarControlesBusqueda()}" />
+                                    </p:selectBooleanCheckbox>
+                                    <p:commandButton value="Buscar" actionListener="#{proveedorBEAN.BuscarProveedores()}" update=":formInformeProveedores:tablaProveedores"/>
+                                </h:panelGrid>
+                                <p:separator />
+                                <h:panelGrid id="gridDatosProveedorCiudad" columns="2" style="margin-bottom:10px" cellpadding="5">
+                                    <p:outputLabel value="Ciudad:" />
+                                    <p:selectOneMenu id="cmbCiudad" value="#{proveedorBEAN.idCiudad}" style="width: 180px" disabled="#{!proveedorBEAN.enabledControlesBusqueda}">
+                                        <f:selectItem itemLabel="-Seleccione-" itemValue="#{proveedorBEAN.proveedor.ciudad.idCiudad}" />
+                                        <f:selectItems value="#{ciudadBEAN.lstCompletaCiudades}" itemValue="#{ciudadBEAN.ciudad.idCiudad}" itemLabel="#{ciudadBEAN.ciudad.nombreCiudad}" />
+                                    </p:selectOneMenu>
+                                </h:panelGrid>    
+                                <h:panelGrid id="gridDatosProveedorCategoria" columns="4" style="margin-bottom:10px" cellpadding="5">
+                                    <p:outputLabel value="Categoria:" />
+                                    <p:selectOneMenu id="cmbCategoria" value="#{proveedorBEAN.idCategoria}" style="width:300px" disabled="#{!proveedorBEAN.enabledControlesBusqueda}">
+                                        <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                        <f:selectItems value="#{proveedorBEAN.lstCategorias}" itemValue="#{proveedorBEAN.categoria.idCategoria}" itemLabel="#{proveedorBEAN.categoria.nombreCategoria}"/>
+                                        <p:ajax update="cmbSubcategoria" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Sub categoria:" />
+                                    <p:selectOneMenu id="cmbSubcategoria"  value="#{proveedorBEAN.idSubcategoria}" style="width:300px" disabled="#{!proveedorBEAN.enabledControlesBusqueda}">
+                                        <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                        <f:selectItems value="#{proveedorBEAN.lstSubCategorias}" itemValue="#{proveedorBEAN.subcategoria.idSubcategoria}" itemLabel="#{proveedorBEAN.subcategoria.nombreSubCategoria}" />
+                                        <p:ajax update="cmbArticulo" />
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid id="gridDatosProveedorArticulo" columns="2" style="margin-bottom:10px" cellpadding="5">
+                                    <p:outputLabel value="Artículo:" />
+                                    <p:selectOneMenu id="cmbArticulo"  value="#{proveedorBEAN.codigoArticulo}" style="width:400px" disabled="#{!proveedorBEAN.enabledControlesBusqueda}">
+                                        <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                        <f:selectItems value="#{proveedorBEAN.lstArticulos}" itemValue="#{proveedorBEAN.articulo.codigoArticulo}" itemLabel="#{proveedorBEAN.articulo.nombre}" />
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+                                <p:separator/>
+                            </p:layoutUnit>
+
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:dataTable id="tablaProveedores" var="item" value="#{proveedorBEAN.listaProveedoresInforme}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No existen datos de proveedores">
+
+                            <f:facet name="{Exporters}">
+                                <h:commandLink>
+                                    <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                                    <p:dataExporter type="pdf" target="tablaProveedores" fileName="Proveedores" />
+                                </h:commandLink>
+
+                            </f:facet>
+
+                            <p:column >  
+                                <f:facet name="header">
+                	<h:outputText value="N°" />
+          		</f:facet>
+                                <h:outputText  value="#{item.idProveedor}" />                  
+                            </p:column>
+                            
+                            <p:column >  
+                                <f:facet name="header">
+                	<h:outputText value="Nit" />
+          		</f:facet>
+                                <h:outputText value="#{item.nit}" />                  
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                	<h:outputText value="Nombre" />
+          		</f:facet>
+                                <h:outputText value="#{item.nombre}" />                 
+                            </p:column>
+                            
+                            <p:column >  
+                                <f:facet name="header">
+                	<h:outputText value="Dirección" />
+          		</f:facet>
+                                <h:outputText value="#{item.direccion}" />                 
+                            </p:column>
+                            
+                            <p:column >  
+                                <f:facet name="header">
+                	<h:outputText value="Teléfono" />
+          		</f:facet>
+                                <h:outputText value="#{item.telefono}" />                 
+                            </p:column>
+                            
+                            <p:column >  
+                                <f:facet name="header">
+                	<h:outputText value="Celular" />
+          		</f:facet>
+                                <h:outputText value="#{item.celular}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                	<h:outputText value="Ciudad" />
+          		</f:facet>
+                                <h:outputText value="#{item.ciudad.nombreCiudad}" />                 
+                            </p:column>
+                        </p:dataTable>
+
+                        <h:commandLink id="pdf" >
+                            <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                            <p:dataExporter type="pdf" target="tablaProveedores" fileName="Proveedores" />
+                        </h:commandLink>
+                        
+                        <h:commandLink id="btnImprimir"  actionListener="#{proveedorBEAN.verReporte()}" title="Vista previa" target="_blank">
+                            <p:graphicImage style="width:25px" url="/resources/images/Impresora.png"/>
+                            
+                        </h:commandLink>
+
+
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

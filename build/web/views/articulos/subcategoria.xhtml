@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h1>Administrar Subcategoría</h1>
+                
+                <h:form>
+                    <p:commandButton value="Nueva Subcategoria" actionListener="#{subcategoriaBEAN.prepararNuevaSubcategoria()}"
+                                     oncomplete="PF('dialogNuevaSubcategoria').show();" update="formNuevaSubcategoria" />
+                </h:form>
+                
+                <h:form id="formAdministrarSubcategoria" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblSubcategorias" paginator="true" paginatorPosition="top" 
+                                 var="subcat" value="#{subcategoriaBEAN.listaSubcategorias}" emptyMessage="No hay datos de subcategorías" rows="15" filteredValue="#{subcategoriaBEAN.listaFiltradaSubcategorias}">
+                        <p:column headerText="Categoria" filterBy="#{subcat.categoriaarticulo.nombreCategoria}" filterMatchMode="contains">
+                            <h:outputText value="#{subcat.categoriaarticulo.nombreCategoria}" />
+                        </p:column>
+                        <p:column headerText="Subcategoria" filterBy="#{subcat.nombreSubCategoria}" filterMatchMode="contains">
+                            <h:outputText value="#{subcat.nombreSubCategoria}" />
+                        </p:column>
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{subcat.descripcion}" />
+                        </p:column>
+                        <p:column headerText="">
+                             <p:commandButton value="Modificar" oncomplete="PF('dialogModificarSubcategoria').show();" update="formModificarSubcategoria">
+                                <f:setPropertyActionListener target="#{subcategoriaBEAN.subcategoria}" value="#{subcat}"/>
+                            </p:commandButton>
+                            
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevaSubcategoria">
+                    <p:dialog id="dlNuevaSubcategoria" widgetVar="dialogNuevaSubcategoria" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nueva Sub categoria">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Categoria:" />
+                            <p:selectOneMenu id="cmbCategoria" value="#{subcategoriaBEAN.idCategoria}" required="true" style="width:250px" requiredMessage="Se requiere categoria">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{categoriaBEAN.lstCategorias}" itemValue="#{categoriaBEAN.categoria.idCategoria}" itemLabel="#{categoriaBEAN.categoria.nombreCategoria}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Nombre Subcategoria:" />
+                            <p:inputText value="#{subcategoriaBEAN.subcategoria.nombreSubCategoria}" required="true" requiredMessage="Se requiere el nombre de subcategoria" style="width: 250px"/>
+                            <p:outputLabel value="Descripción:" />
+                            <p:inputTextarea value="#{subcategoriaBEAN.subcategoria.descripcion}" rows="2" cols="60" maxlength="100" autoResize="false"/>
+                            
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{subcategoriaBEAN.nuevaSubcategoria()}" update=":formAdministrarSubcategoria:tblSubcategorias" 
+                                         oncomplete="PF('dialogNuevaSubcategoria').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevaSubcategoria').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarSubcategoria">
+                    <p:dialog id="dlModificarSubcategoria" widgetVar="dialogModificarSubcategoria" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Modificar Sub categoria">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Categoria:" />
+                            <p:selectOneMenu id="cmbCategoria" value="#{subcategoriaBEAN.idCategoria}" required="true" style="width:250px" requiredMessage="Se requiere categoria">
+                                <f:selectItem itemLabel="--Seleccione--" itemValue="" />
+                                <f:selectItems value="#{categoriaBEAN.lstCategorias}" itemValue="#{categoriaBEAN.categoria.idCategoria}" itemLabel="#{categoriaBEAN.categoria.nombreCategoria}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Nombre Subcategoria:" />
+                            <p:inputText value="#{subcategoriaBEAN.subcategoria.nombreSubCategoria}" required="true" requiredMessage="Se requiere el nombre de subcategoria" style="width: 250px"/>
+                            <p:outputLabel value="Descripción:" />
+                            <p:inputTextarea value="#{subcategoriaBEAN.subcategoria.descripcion}" rows="2" cols="60" maxlength="100" autoResize="false"/>
+                            
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{subcategoriaBEAN.actualizarSubcategoria()}" update=":formAdministrarSubcategoria:tblSubcategorias" 
+                                         oncomplete="PF('dialogModificarSubcategoria').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarSubcategoria').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

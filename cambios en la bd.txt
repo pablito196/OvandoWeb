@@ -1,0 +1,16 @@
+crear campo IdPreventaFactura en la tabla preventafactura como clave principal
+crear el trigger actualizararticuloporpreventa (ya no va)
+Crear el campo idAlmacen en la tabla compra y definirla como llave foranea de la tabla almacen 
+Crear el campo idAcceso en la tabla acceso
+Crear el trigger actualizararticuloporentrada
+Crear el trigger actualizararticuloporsalida
+Crear la tabla ingreso con los siguientes campos
+1. IdIngreso integer 10 primary key
+2. idEmpleado integer 10 foreing key de la tabla empleado
+3. IdSucursal integer 10 foreing key de la tabla sucursal (se puede utilizar el SQLyog)
+Crear el campo idAlmacen en la tabla venta y definirla como llave foranea de la tabla almacen 
+Crear el campo idAlmacen en la tabla preventa y definirla como llave foranea de la tabla almacen
+crear campo IdVentaFactura en la tabla ventafactura como clave principal
+crear campo TiempoRegistro en la tabla factura tipo bigint(20)
+Crear el campo idSucursal en la tabla dosificacion int(10) y definirla como llave foranea de la tabla sucursal
+Crear el campo Texto varchar(300) en la tabla dosificacion

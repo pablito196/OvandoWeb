@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Proveedor" table="proveedor" catalog="ovandos" optimistic-lock="version">
+        <id name="idProveedor" type="java.lang.Integer">
+            <column name="IdProveedor" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="ciudad" class="sys.model.Ciudad" fetch="select">
+            <column name="idCiudad" not-null="true" />
+        </many-to-one>
+        <property name="nit" type="string">
+            <column name="Nit" length="20" />
+        </property>
+        <property name="nombre" type="string">
+            <column name="Nombre" length="100" not-null="true" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="Direccion" length="60" not-null="true" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="Telefono" length="10" />
+        </property>
+        <property name="celular" type="string">
+            <column name="Celular" length="10" />
+        </property>
+        <property name="correoElectronico" type="string">
+            <column name="CorreoElectronico" length="80" />
+        </property>
+        <property name="paginaWeb" type="string">
+            <column name="PaginaWeb" length="80" />
+        </property>
+        <property name="rubro" type="string">
+            <column name="Rubro" length="50" />
+        </property>
+        <set name="contactos" table="contacto" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdProveedor" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Contacto" />
+        </set>
+        <set name="cuentabancarias" table="cuentabancaria" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdProveedor" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cuentabancaria" />
+        </set>
+        <set name="compras" table="compra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdProveedor" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Compra" />
+        </set>
+    </class>
+</hibernate-mapping>

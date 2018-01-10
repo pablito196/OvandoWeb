@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Factura" pageWidth="453" pageHeight="612" columnWidth="417" leftMargin="20" rightMargin="16" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="idfactura" class="java.lang.Integer"/>
+	<parameter name="precioliteral" class="java.lang.String"/>
+	<parameter name="numerofactura" class="java.lang.Integer"/>
+	<parameter name="numeroautorizacion" class="java.lang.String"/>
+	<parameter name="fechafactura" class="java.util.Date"/>
+	<parameter name="razonsocial" class="java.lang.String"/>
+	<parameter name="nit" class="java.lang.String"/>
+	<parameter name="totalventa" class="java.math.BigDecimal"/>
+	<parameter name="fechalimiteemision" class="java.util.Date"/>
+	<parameter name="codigocontrol" class="java.lang.String"/>
+	<parameter name="usuario" class="java.lang.String"/>
+	<parameter name="leyenda" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select articulo.CodigoArticulo, articulo.Nombre, detalleventa.Cantidad, detalleventa.PrecioVentaReal, detalleventa.Total 
+From articulo, detalleventa, factura
+Where articulo.CodigoArticulo = detalleventa.CodigoArticulo 
+ 
+
+and detalleventa.IdFactura = factura.IdFactura
+ 
+and factura.IdFactura = $P{idfactura}]]>
+	</queryString>
+	<field name="CodigoArticulo" class="java.lang.String"/>
+	<field name="Nombre" class="java.lang.String"/>
+	<field name="Cantidad" class="java.lang.Float"/>
+	<field name="PrecioVentaReal" class="java.math.BigDecimal"/>
+	<field name="Total" class="java.math.BigDecimal"/>
+	<variable name="CodigoQR" class="java.lang.String">
+		<variableExpression><![CDATA["1076851018"+"|"+"Ovando's"+"|"+$P{numerofactura}+"|"+$P{numeroautorizacion}+
+"|"+$P{fechafactura}.toString()+"|"+$P{totalventa}+"|"+$P{codigocontrol}+"|"+
+$P{fechalimiteemision}+"|"+"0"+"|"+"0"+"|"+$P{nit}+"|"+$P{razonsocial}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="148" splitType="Stretch">
+			<staticText>
+				<reportElement x="33" y="102" width="40" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<text><![CDATA[Sucre, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="34" width="60" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FACTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="121" width="63" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Señor(es):]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="296" y="49" width="86" height="11"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="false"/>
+				</textElement>
+				<text><![CDATA[AUTORIZACION N°]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="251" y="99" width="22" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[NIT:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="346" y="34" width="48" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{numerofactura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="296" y="62" width="87" height="11"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{numeroautorizacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="80" y="102" width="121" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechafactura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="94" y="122" width="284" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{razonsocial}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="273" y="99" width="105" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nit}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="3" y="2" width="375" height="18" backcolor="#FFFFFF"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="341" y="6" width="31" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="6" width="182" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true" isUnderline="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="289" y="6" width="29" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[P/U]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="6" width="49" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CANTIDAD]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField pattern="###0.00">
+				<reportElement x="4" y="1" width="42" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="47" y="1" width="234" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="281" y="0" width="29" height="16"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PrecioVentaReal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="325" y="1" width="41" height="15"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="88" splitType="Stretch">
+			<staticText>
+				<reportElement x="70" y="20" width="24" height="11"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Son:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="266" y="4" width="51" height="13"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL Bs.:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="94" y="20" width="284" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{precioliteral}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="69" y="34" width="79" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código de Control:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="229" y="46" width="54" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Emitido Por:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="316" y="4" width="48" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{totalventa}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="149" y="33" width="76" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{codigocontrol}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RealHeight">
+				<reportElement x="3" y="3" width="66" height="73"/>
+				<imageExpression><![CDATA[com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(
+    new com.google.zxing.qrcode.QRCodeWriter().encode(
+            $V{CodigoQR}, com.google.zxing.BarcodeFormat.QR_CODE, 250, 250))]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="228" y="34" width="97" height="15"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha límite de Emisión:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="328" y="33" width="49" height="13"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechalimiteemision}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="282" y="46" width="65" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{usuario}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="56" width="319" height="27"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{leyenda}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="8" splitType="Stretch"/>
+	</summary>
+</jasperReport>

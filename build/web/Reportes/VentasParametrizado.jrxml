@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.8181818181818186"/>
+	<property name="ireport.x" value="100"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="consulta" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FechaI" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FechaF" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="usuario" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+    venta.NumeroVenta,
+    venta.NumeroPreventa,
+    FechaVenta,
+    MontoTotal,
+    venta.Estado,
+    (SELECT 
+            sum(p.MontoPagado) as total
+        FROM
+            pagoventascredito p
+                inner join
+            cronoventascredito c ON c.idCronoV = p.idCronoV
+                inner join
+            venta v ON c.numeroventa = v.numeroventa
+        where
+            p.idCronoV in (SELECT 
+                    IdCronoV
+                FROM
+                    ovandos.cronoventascredito) and venta.NumeroVenta = c.NumeroVenta
+    ) as PagadoAlCredito,
+    (SELECT 
+            sum(p.MontoPagado) as total
+        FROM
+            pagoventascredito p
+                inner join
+            cronoventascredito c ON c.idCronoV = p.idCronoV
+                inner join
+            venta v ON c.numeroventa = v.numeroventa
+        where
+            p.idCronoV in (SELECT 
+                    IdCronoV
+                FROM
+                    ovandos.cronoventascredito) and venta.NumeroVenta = c.NumeroVenta) as PagadosCredito,
+    
+    
+    
+    0 as PagosAlContado,
+    cl.NombresCliente,
+    u.LoginUsuario,
+    TipoCambio,
+    tp.idTipopago,
+    tp.DescPago
+FROM
+    venta
+        inner join
+    cliente cl ON cl.CiCliente = venta.CiCliente
+        inner join
+    usuario u ON u.IdUsuario = venta.IdUsuario
+        inner join
+    tipomoneda tm ON tm.idTipomoneda = venta.idTipomoneda
+        inner join
+    tipopago tp ON tp.idTipopago = venta.idTipopago
+        inner join
+    cronoventascredito crv On venta.NumeroVenta = crv.NumeroVenta
+WHERE
+   venta.Estado <> 'EN ESPERA' 
+UNION ALL SELECT 
+    NumeroVenta,
+    venta.NumeroPreventa,
+    FechaVenta,
+    MontoTotal,
+    venta.Estado,
+    0 as PagadoAlCredito,
+    0 as PagosCredito,
+    
+    (SELECT 
+            sum(Total) AS total
+        FROM
+            detalleventa dv
+                inner join
+            venta v ON dv.numeroventa = v.numeroventa
+        WHERE
+            dv.NumeroVenta = venta.numeroventa) AS PagosAlContado,
+    cl.NombresCliente,
+    u.LoginUsuario,
+    TipoCambio,
+    tp.idTipopago,
+    tp.DescPago
+FROM
+    venta
+        inner join
+    cliente cl ON cl.CiCliente = venta.CiCliente
+        inner join
+    usuario u ON u.IdUsuario = venta.IdUsuario
+        inner join
+    tipomoneda tm ON tm.idTipomoneda = venta.idTipomoneda
+        inner join
+    tipopago tp ON tp.idTipopago = venta.idTipopago
+WHERE
+    NumeroVenta NOT IN (SELECT 
+            NumeroVenta
+        FROM
+            cronoventascredito) AND venta.Estado <> 'EN ESPERA' 
+
+
+ORDER BY fechaventa DESC]]>
+	</queryString>
+	<field name="NumeroVenta" class="java.lang.Integer"/>
+	<field name="NumeroPreventa" class="java.lang.Integer"/>
+	<field name="FechaVenta" class="java.sql.Timestamp"/>
+	<field name="MontoTotal" class="java.math.BigDecimal"/>
+	<field name="Estado" class="java.lang.String"/>
+	<field name="PagadoAlCredito" class="java.math.BigDecimal"/>
+	<field name="PagadosCredito" class="java.math.BigDecimal"/>
+	<field name="PagosAlContado" class="java.math.BigDecimal"/>
+	<field name="NombresCliente" class="java.lang.String"/>
+	<field name="LoginUsuario" class="java.lang.String"/>
+	<field name="TipoCambio" class="java.math.BigDecimal"/>
+	<field name="idTipopago" class="java.lang.Integer"/>
+	<field name="DescPago" class="java.lang.String"/>
+	<variable name="MontoCredito" class="java.lang.Double">
+		<variableExpression><![CDATA[( $F{idTipopago} == 1 ? 0.00F :$F{MontoTotal} )]]></variableExpression>
+	</variable>
+	<variable name="MontoPagado" class="java.lang.Double">
+		<variableExpression><![CDATA[( $F{idTipopago} == 1 ? $F{PagosAlContado} :$F{PagadoAlCredito} )]]></variableExpression>
+	</variable>
+	<variable name="saldo" class="java.lang.Double">
+		<variableExpression><![CDATA[( $F{idTipopago} == 1 ? 0.00F :$F{MontoTotal}-$F{PagadosCredito} )]]></variableExpression>
+	</variable>
+	<variable name="totalcredito" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{MontoCredito}]]></variableExpression>
+	</variable>
+	<variable name="totalmontopagado" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{MontoPagado}]]></variableExpression>
+	</variable>
+	<variable name="totalsaldo" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{saldo}]]></variableExpression>
+	</variable>
+	<variable name="totalventa" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{MontoTotal}]]></variableExpression>
+	</variable>
+	<group name="totales">
+		<groupExpression><![CDATA[1]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="56">
+				<staticText>
+					<reportElement x="197" y="0" width="53" height="13"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Totales:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="197" y="29" width="64" height="13"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Efectivo:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="181" y="13" width="277" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="6" y="42" width="746" height="1"/>
+				</line>
+				<textField pattern="#,##0.00">
+					<reportElement x="294" y="0" width="48" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{totalcredito}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="349" y="0" width="49" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{totalmontopagado}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="401" y="0" width="55" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{totalsaldo}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="323" y="29" width="74" height="13"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{totalmontopagado}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="466" y="29" width="59" height="13"/>
+					<textElement>
+						<font fontName="Times New Roman" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Ventas:]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="530" y="29" width="83" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{totalventa}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="91">
+			<staticText>
+				<reportElement x="271" y="52" width="206" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="15" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE VENTAS]]></text>
+			</staticText>
+			<textField pattern="">
+				<reportElement x="271" y="72" width="205" height="11"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Entre  " + $P{FechaI}+ "-" +$P{FechaF}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="6" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="752" height="21"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="8" y="2" width="32" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Numero Venta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="104" y="2" width="34" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="1" width="49" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto Credito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="0" width="35" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto  Pagado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="2" width="109" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="679" y="1" width="60" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="418" y="1" width="40" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="611" y="1" width="61" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="573" y="3" width="41" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="514" y="2" width="41" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[T/C]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="466" y="2" width="41" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="2" width="44" height="20"/>
+				<textElement>
+					<font fontName="Times New Roman" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Numero Pre venta]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="26" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="94" y="2" width="52" height="16"/>
+				<textElement>
+					<font fontName="Times New Roman" size="9" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FechaVenta}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="8" y="2" width="32" height="17"/>
+				<textElement>
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NumeroVenta}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="146" y="2" width="148" height="17"/>
+				<textElement>
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NombresCliente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="681" y="2" width="59" height="17"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LoginUsuario}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="6" y="22" width="746" height="1"/>
+			</line>
+			<textField pattern="#,##0.00">
+				<reportElement x="365" y="2" width="33" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{MontoPagado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="403" y="2" width="55" height="17"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{saldo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="616" y="1" width="56" height="18"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Estado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="559" y="1" width="55" height="18"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MontoTotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="519" y="2" width="36" height="17"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TipoCambio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="2" width="50" height="17"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DescPago}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="294" y="2" width="48" height="16"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{MontoCredito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="50" y="2" width="44" height="16"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NumeroPreventa}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="29" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy h.mm a">
+				<reportElement x="0" y="26" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="13" width="122" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha Hora de impresión]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="453" y="26" width="267" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="122" height="13"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Usuario :" + $P{usuario}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="752" height="1"/>
+			</line>
+			<textField evaluationTime="Report">
+				<reportElement x="720" y="26" width="22" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Ventaservicio" table="ventaservicio" catalog="ovandos" optimistic-lock="version">
+        <id name="idVentaServicio" type="java.lang.Integer">
+            <column name="IdVentaServicio" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cliente" class="sys.model.Cliente" fetch="select">
+            <column name="CiCliente" length="20" not-null="true" />
+        </many-to-one>
+        <many-to-one name="servicio" class="sys.model.Servicio" fetch="select">
+            <column name="IdServicio" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="precio" type="big_decimal">
+            <column name="Precio" precision="7" not-null="true" />
+        </property>
+        <property name="detalle" type="string">
+            <column name="Detalle" length="65535" />
+        </property>
+        <property name="fechaServicio" type="timestamp">
+            <column name="FechaServicio" length="19" not-null="true" />
+        </property>
+        <property name="idTipomoneda" type="java.lang.Integer">
+            <column name="idTipomoneda" />
+        </property>
+        <property name="idEmpleado" type="java.lang.Integer">
+            <column name="idEmpleado" />
+        </property>
+    </class>
+</hibernate-mapping>

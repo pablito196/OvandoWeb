@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>Facelet Title</title>
+        <script type="text/javascript" >
+            PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+        </script>
+    </h:head>
+    
+    <h:body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Libro de ventas</h2>
+                <h:form id="formLibroVentas">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 1470px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosInformeVentas" style="width: 100%; height: 130px;" >
+                            <p:layoutUnit id="fechas" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+                                <h:panelGrid id="gridFechas" columns="2">
+                                    <p:outputLabel for="cdfechaInicio" value="Desde:" style="font-weight: bold;"/>
+                                    <p:calendar id="cdfechaInicio" value="#{libroVentasBEAN.fechaInicio}" locale="es" navigator="true" pattern="yyyy-MMM-dd"  size="15" required="true" requiredMessage="Seleccione fecha de inicio"/>    
+                                    <p:outputLabel for="cdfechaFin" value="Hasta:" style="font-weight: bold;"/>
+                                    <p:calendar id="cdfechaFin" value="#{libroVentasBEAN.fechaFin}" locale="es" navigator="true" pattern="yyyy-MMM-dd"  size="15" required="true" requiredMessage="Seleccione fecha final"/>
+                                    
+                                    
+                                </h:panelGrid>
+                                <p:commandButton value="Generar libro de ventas" actionListener="#{libroVentasBEAN.generarLibro()}" update=":formLibroVentas:tablaLibroVentas"/>
+                                <p:separator />
+                                
+                                
+                            </p:layoutUnit>
+
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:dataTable id="tablaLibroVentas" var="item" value="#{libroVentasBEAN.listaLibroVentas}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No existen datos en el libro de ventas">
+
+                            <f:facet name="{Exporters}">
+                                <h:commandLink>
+                                    <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                                    <p:dataExporter type="pdf" target="tablaVentas" fileName="Ventas" />
+                                </h:commandLink>
+
+                            </f:facet>
+
+                            <p:column style="width: 40px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nº" />
+                                </f:facet>
+                                <h:outputText  value="#{item.numero}" />                  
+                            </p:column>
+
+                            <p:column style="width: 80px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="FECHA FACTURA" />
+                                </f:facet>
+                                <h:outputText value="#{item.fechaFactura}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                 
+                            </p:column>
+
+                            <p:column style="width: 55px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nº DE FACTURA" />
+                                </f:facet>
+                                <h:outputText value="#{item.numeroFactura}" />                 
+                            </p:column>
+
+                            <p:column style="width: 120px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="Nº DE AUTORIZACIÓN" />
+                                </f:facet>
+                                <h:outputText value="#{item.numeroAutorizacion}" />                 
+                            </p:column>
+
+                            <p:column style="width: 40px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="ESTADO" />
+                                </f:facet>
+                                <h:outputText value="#{item.estado}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="NIT/CI CLIENTE" />
+                                </f:facet>
+                                <h:outputText value="#{item.ciCliente}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="NOMBRE/RAZON SOCIAL" />
+                                </f:facet>
+                                <h:outputText value="#{item.razonSocial}" />                 
+                            </p:column>
+
+                            <p:column style="width: 50px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="IMPORTE TOTAL VENTA" />
+                                </f:facet>
+                                <h:outputText value="#{item.importeTotalVenta}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="IMPORTE ICE/IEHD/TASAS" />
+                                </f:facet>
+                                <h:outputText value="#{item.ICE}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="EXPORTACIONES Y OPERACIONES EXENTAS" />
+                                </f:facet>
+                                <h:outputText value="#{item.exportaciones}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="VENTAS GRAVADAS A TASA CERO" />
+                                </f:facet>
+                                <h:outputText value="#{item.ventasGravadasTasaCero}" />                 
+                            </p:column>
+                            
+                            <p:column style="width: 50px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="SUBTOTAL" />
+                                </f:facet>
+                                <h:outputText value="#{item.subTotal}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="DESCUENTOS, BONIFICACIONES Y REBAJAS OTORGADAS" />
+                                </f:facet>
+                                <h:outputText value="#{item.descuentos}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="IMPORTE BASE PARA DÉBITO FISCAL" />
+                                </f:facet>
+                                <h:outputText value="#{item.importeBaseDebitoFiscal}" />                 
+                            </p:column>
+                            
+                            <p:column style="width: 40px; text-align: center">  
+                                <f:facet name="header">
+                                    <h:outputText value="DEBITO FISCAL" />
+                                </f:facet>
+                                <h:outputText value="#{item.debitoFiscal}" />                 
+                            </p:column>
+                            
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="CÓDIGO DE CONTROL" />
+                                </f:facet>
+                                <h:outputText value="#{item.codigoControl}" />                 
+                            </p:column>
+                            
+                        </p:dataTable>
+
+                        <p:separator/>
+                        
+                        <h:commandLink>
+                            <p:graphicImage style="width:25px" url="/resources/images/excel.png" title="Genera archivo excel del libro de ventas"/>
+                            <p:dataExporter type="xls" target="tablaLibroVentas" fileName="LibroVentas" pageOnly="true" />
+                        </h:commandLink>
+
+                    </p:panel>
+
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

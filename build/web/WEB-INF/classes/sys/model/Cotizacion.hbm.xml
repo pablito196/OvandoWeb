@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Cotizacion" table="cotizacion" catalog="ovandos" optimistic-lock="version">
+        <id name="numeroCotizacion" type="java.lang.Integer">
+            <column name="NumeroCotizacion" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="cliente" class="sys.model.Cliente" fetch="select">
+            <column name="CiCliente" length="20" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="fechaCotizacion" type="timestamp">
+            <column name="FechaCotizacion" length="19" not-null="true" />
+        </property>
+        <property name="montoTotal" type="big_decimal">
+            <column name="MontoTotal" precision="8" not-null="true" />
+        </property>
+        <property name="tipoCambio" type="big_decimal">
+            <column name="TipoCambio" precision="4" />
+        </property>
+        <property name="observaciones" type="string">
+            <column name="Observaciones" length="300" />
+        </property>
+        <property name="idTipomoneda" type="int">
+            <column name="idTipomoneda" not-null="true" />
+        </property>
+        <property name="estado" type="string">
+            <column name="Estado" length="20" />
+        </property>
+        <property name="vigencia" type="string">
+            <column name="Vigencia" length="50" />
+        </property>
+        <set name="detallecotizacions" table="detallecotizacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="NumeroCotizacion" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detallecotizacion" />
+        </set>
+    </class>
+</hibernate-mapping>

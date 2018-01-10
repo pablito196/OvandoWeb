@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Devolucion" table="devolucion" catalog="ovandos" optimistic-lock="version">
+        <id name="idDevolucion" type="java.lang.Integer">
+            <column name="IdDevolucion" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="articulo" class="sys.model.Articulo" fetch="select">
+            <column name="CodigoArticulo" length="20" not-null="true" />
+        </many-to-one>
+        <many-to-one name="venta" class="sys.model.Venta" fetch="select">
+            <column name="NumeroVenta" not-null="true" />
+        </many-to-one>
+        <property name="precioVentaReal" type="big_decimal">
+            <column name="PrecioVentaReal" precision="7" not-null="true" />
+        </property>
+        <property name="cantidad" type="float">
+            <column name="Cantidad" precision="5" not-null="true" />
+        </property>
+        <property name="total" type="big_decimal">
+            <column name="Total" precision="8" not-null="true" />
+        </property>
+        <property name="idFactura" type="java.lang.Integer">
+            <column name="IdFactura" />
+        </property>
+        <property name="estadoArticulo" type="string">
+            <column name="EstadoArticulo" length="20" />
+        </property>
+        <property name="fechaDevolucion" type="timestamp">
+            <column name="FechaDevolucion" length="19" not-null="true" />
+        </property>
+        <property name="observacion" type="string">
+            <column name="Observacion" length="300" />
+        </property>
+    </class>
+</hibernate-mapping>

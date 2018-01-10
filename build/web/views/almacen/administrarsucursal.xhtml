@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar sucursal</h2>
+                <h:form>
+                    <p:commandButton value="Nueva Sucursal" actionListener="#{sucursalBEAN.prepararNuevaSucursal()}"
+                                     oncomplete="PF('dialogNuevaSucursal').show();" update="formNuevaSucursal" />
+                </h:form>
+                
+                <h:form id="formAdministrarSucursal" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tablaSucursales" paginator="true" paginatorPosition="top" 
+                                 var="suc" value="#{sucursalBEAN.listaSucursales}" emptyMessage="No hay datos de sucursales" rows="15">
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{suc.nombreSucursal}" />
+                        </p:column>
+                        <p:column headerText="Dirección">
+                            <h:outputText value="#{suc.direccion}" />
+                        </p:column>
+                        <p:column headerText="Teléfono">
+                            <h:outputText value="#{suc.telefono}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarSucursal').show();" update="formModificarSucursal">
+                                <f:setPropertyActionListener target="#{sucursalBEAN.sucursal}" value="#{suc}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+                <h:form id="formNuevaSucursal">
+                    <p:dialog id="dlgNuevaSucursal" widgetVar="dialogNuevaSucursal" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nueva sucursal">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{sucursalBEAN.sucursal.nombreSucursal}" required="true" requiredMessage="Se requiere el nombre de la sucursal"/>
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{sucursalBEAN.sucursal.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{sucursalBEAN.sucursal.telefono}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{sucursalBEAN.nuevaSucursal()}" update=":formAdministrarSucursal:tablaSucursales" 
+                                         oncomplete="PF('dialogNuevaSucursal').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevaSucursal').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarSucursal">
+                    <p:dialog id="dlgModificarSucursal" widgetVar="dialogModificarSucursal" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Modificar sucursal">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{sucursalBEAN.sucursal.nombreSucursal}" required="true" requiredMessage="Se requiere el nombre de la sucursal"/>
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{sucursalBEAN.sucursal.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{sucursalBEAN.sucursal.telefono}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{sucursalBEAN.actualizarSucursal()}" update=":formAdministrarSucursal:tablaSucursales" 
+                                         oncomplete="PF('dialogModificarSucursal').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarSucursal').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

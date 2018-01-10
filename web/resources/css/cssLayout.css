@@ -1,0 +1,74 @@
+#divGeneral{
+    margin: 0 auto;
+    width: 1500px;
+}
+
+#sucursal{
+    color: #000000;
+    font-weight: bold;
+    position: absolute;
+    left: 25px;
+    top: 25px;
+}
+#sessionUsuario{
+    color: #000000;
+    font-weight: bold;
+    position: absolute;
+    right: 25px;
+    top: 25px;
+}
+#menuPrincipal{
+    margin-top: 20px;
+    position: relative;
+    top: 5px;
+}
+
+#top {
+    position: relative;
+    background-color: lightblue;
+    border-radius: 10px;
+    box-shadow: 0px 2px 2px rgba(0,0,0,5);
+    color: white;
+    padding: 0px;
+    margin: 0px 0px 10px 0px;
+}
+
+#bottom {
+    border-radius: 10px;
+    box-shadow: 0px 2px 2px rgba(0,0,0,5);
+    font-size: 14px;
+    font-weight: bold;
+    height: 30px;
+    position: relative;
+    background-color: lightblue;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+    text-align: center;
+    margin-top: 3px;
+}
+
+
+
+.center_content {
+    border-radius: 10px;
+    box-shadow: 0px 2px 2px rgba(0,0,0,5);
+    position: relative;
+    background-color: mintcream;
+    padding: 10px;
+}
+
+
+
+#top a:link, #top a:visited {
+  color: black;
+  font-weight : bold;
+  text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+  color: highlighttext;
+  font-weight : bold;
+  text-decoration : underline;
+}
+
+

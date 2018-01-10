@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Pago de compras a crédito</h2>
+            <h:form id="formCompra">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 900px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosCompra" style="width: 100%; height: 200px;" >
+                            <p:layoutUnit id="datosProveedor" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+
+                                <h:panelGrid id="gridBuscarDatosProveedor" columns="5">
+                                    <p:outputLabel value="NIT:" style="font-weight: bold;"/>
+                                    <p:inputText value="#{comprasBEAN.nitProveedor}" size="12" >
+                                        <p:ajax event="keyup" listener="#{comprasBEAN.agregarDatosProveedortxtnitProveedor()}"
+                                                update=":formCompra:gridDatosProveedor :formCompra:tablaComprasCredito :formCompra:gridTotalSaldo :formCompra:gridMontoPagar :formCompra:gridObservacionesPago :formCompra:btnPagar :formCompra:btnCancelar" />
+                                    </p:inputText>
+                                    <p:commandButton value="..." oncomplete="PF('dialogProveedores').show();"
+                                                     update=":formCompra:dlgProveedores" />
+                                    
+                                </h:panelGrid>
+                                <p:separator/>
+                                <h:panelGrid id="gridDatosProveedor"  columns="2">
+                                    <p:outputLabel value="Nombres:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblNombreProveedor" value="#{comprasBEAN.proveedor.nombre}" />
+                                    <p:outputLabel value="Dirección:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblDireccionProveedor" value="#{comprasBEAN.proveedor.direccion}" />
+                                    <p:outputLabel value="Teléfono:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblTelefonoProveedor" value="#{comprasBEAN.proveedor.telefono}" />
+                                    <p:outputLabel value="Celular:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblCelularProveedor" value="#{comprasBEAN.proveedor.celular}" />
+                                    <p:outputLabel value="Correo electrónico:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblCorreoElectronicoProveedor" value="#{comprasBEAN.proveedor.correoElectronico}" />
+                                    <p:outputLabel value="Página web:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblPaginaWeb" value="#{comprasBEAN.proveedor.paginaWeb}" />
+                                </h:panelGrid>
+
+                            </p:layoutUnit>
+                            
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:dataTable id="tablaComprasCredito" var="item" value="#{comprasBEAN.listaComprascreditoFormateada}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No existen datos de compras">
+                            
+                            <p:column  headerText="Nº" >  
+                                <h:outputText  value="#{item.idCompra}" />                  
+                            </p:column>		
+                            <p:column  headerText="Fecha Compra" >  
+                                <h:outputText value="#{item.fechaCompra}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                  
+                            </p:column>			
+                            <p:column  headerText="Total" style="text-align: right; width: 100px">  
+                                <h:outputText value="#{item.montoCompra}" />                  
+                            </p:column>
+                            
+                            <p:column  headerText="Monto Pagado" style="text-align: right; width: 100px">  
+                                <h:outputText value="#{item.montoPagado}" />                 
+                            </p:column>
+                            <p:column  headerText="Saldo" style="text-align: right; width: 100px" >  
+                                <h:outputText value="#{item.saldo}" />                  
+                            </p:column>
+                            
+                            
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalSaldo" columns="2" style="font-size: 20px; margin: 0 auto;">
+                            <p:outputLabel value="TOTAL SALDO: Bs. "/>
+                            <p:outputLabel value="#{comprasBEAN.totalSaldo}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid id="gridMontoPagar" columns="2">
+                            <p:outputLabel value="Monto a pagar: "/>
+                            <p:inputText value="#{comprasBEAN.montoaPagar}" disabled="#{!comprasBEAN.enabled}" />
+                        </h:panelGrid>
+                        <h:panelGrid id="gridObservacionesPago" columns="2">
+                            <p:outputLabel value="Observaciones: "/>
+                            <p:inputTextarea value="#{comprasBEAN.observacionPagoCompra}" rows="2" cols="88" maxlength="100" autoResize="false" disabled="#{!comprasBEAN.enabled}" />
+                        </h:panelGrid>
+                        <p:separator/>
+                        <p:commandButton id="btnPagar" value="Pagar" actionListener="#{comprasBEAN.pagarCompraCredito()}" update=":formCompra" disabled="#{!comprasBEAN.enabled}"/>
+                        
+                        <p:commandButton id="btnCancelar" value="Cancelar" action="#{comprasBEAN.limpiarComprasaCredito()}" update=":formCompra" disabled="#{!comprasBEAN.enabled}"/>
+                    </p:panel>
+                    <!--dialog para mostrar proveedores -->
+                    <p:dialog id="dlgProveedores" widgetVar="dialogProveedores" modal="true" resizable="false"
+                              showEffect="explode" hideEffect="explode" >
+                        <p:dataTable id="tablaProveedores" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="prov" value="#{proveedorBEAN.listaProveedores}" emptyMessage="No hay datos de proveedores" rows="15" widgetVar=""  filteredValue="#{proveedorBEAN.listaFiltradaProveedores}">
+                            <p:column headerText="NIT" filterBy="#{prov.nit}" filterMatchMode="contains">
+                                <h:outputText value="#{prov.nit}" />
+                            </p:column>
+                            <p:column headerText="Nombres / Razón Social" filterBy="#{prov.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{prov.nombre}" />
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandButton value="Seleccionar" actionListener="#{comprasBEAN.agregarDatosProveedor(prov.nit)}"  
+                                                 oncomplete="PF('dialogProveedores').hide();" 
+                                                 update=":formCompra:gridDatosProveedor :formCompra:tablaComprasCredito :formCompra:gridTotalSaldo :formCompra:gridMontoPagar :formCompra:gridObservacionesPago :formCompra:btnPagar :formCompra:btnCancelar"/>
+
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Cerrar" onclick="PF('dialogProveedores').hide();" />
+                    </p:dialog>
+                    <!-- fin dialogProveedores -->
+                </h:form>
+            
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

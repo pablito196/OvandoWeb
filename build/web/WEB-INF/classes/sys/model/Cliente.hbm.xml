@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Cliente" table="cliente" catalog="ovandos" optimistic-lock="version">
+        <id name="ciCliente" type="string">
+            <column name="CiCliente" length="20" />
+            <generator class="assigned" />
+        </id>
+        <property name="nombresCliente" type="string">
+            <column name="NombresCliente" length="150" not-null="true" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="Direccion" length="100" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="Telefono" length="15" />
+        </property>
+        <property name="celular" type="string">
+            <column name="Celular" length="15" />
+        </property>
+        <property name="correoElectronico" type="string">
+            <column name="CorreoElectronico" length="100" />
+        </property>
+        <property name="estado" type="string">
+            <column name="Estado" length="20" />
+        </property>
+        <set name="preventas" table="preventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CiCliente" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Preventa" />
+        </set>
+        <set name="cotizacions" table="cotizacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CiCliente" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cotizacion" />
+        </set>
+        <set name="ventaservicios" table="ventaservicio" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CiCliente" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Ventaservicio" />
+        </set>
+        <set name="ventas" table="venta" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="CiCliente" length="20" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Venta" />
+        </set>
+    </class>
+</hibernate-mapping>

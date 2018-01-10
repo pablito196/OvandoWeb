@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Dosificacion" table="dosificacion" catalog="ovandos" optimistic-lock="version">
+        <id name="numeroAutorizacion" type="string">
+            <column name="NumeroAutorizacion" length="50" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="sucursal" class="sys.model.Sucursal" fetch="select">
+            <column name="IdSucursal" />
+        </many-to-one>
+        <property name="numeroInicialFactura" type="int">
+            <column name="NumeroInicialFactura" not-null="true" />
+        </property>
+        <property name="fechaLimiteEmision" type="date">
+            <column name="FechaLimiteEmision" length="10" not-null="true" />
+        </property>
+        <property name="llaveDosificacion" type="string">
+            <column name="LlaveDosificacion" length="500" not-null="true" />
+        </property>
+        <property name="tiempoAlerta" type="int">
+            <column name="TiempoAlerta" not-null="true" />
+        </property>
+        <property name="estado" type="short">
+            <column name="Estado" not-null="true" />
+        </property>
+        <property name="inicialActivo" type="java.lang.Integer">
+            <column name="InicialActivo" />
+        </property>
+        <property name="texto" type="string">
+            <column name="Texto" length="300" />
+        </property>
+    </class>
+</hibernate-mapping>

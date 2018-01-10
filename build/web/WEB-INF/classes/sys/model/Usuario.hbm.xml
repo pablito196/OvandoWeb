@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Usuario" table="usuario" catalog="ovandos" optimistic-lock="version">
+        <id name="idUsuario" type="java.lang.Integer">
+            <column name="IdUsuario" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="empleado" class="sys.model.Empleado" fetch="select">
+            <column name="idEmpleado" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tipousuario" class="sys.model.Tipousuario" fetch="select">
+            <column name="idTipoUsuario" not-null="true" />
+        </many-to-one>
+        <property name="loginUsuario" type="string">
+            <column name="LoginUsuario" length="50" not-null="true" />
+        </property>
+        <property name="password" type="string">
+            <column name="Password" length="200" not-null="true" />
+        </property>
+        <set name="compras" table="compra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Compra" />
+        </set>
+        <set name="gastos" table="gasto" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Gasto" />
+        </set>
+        <set name="preventas" table="preventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Preventa" />
+        </set>
+        <set name="ventaservicios" table="ventaservicio" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Ventaservicio" />
+        </set>
+        <set name="pagocompracreditos" table="pagocompracredito" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Pagocompracredito" />
+        </set>
+        <set name="cronocomprascreds" table="cronocomprascred" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cronocomprascred" />
+        </set>
+        <set name="accesos" table="acceso" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Acceso" />
+        </set>
+        <set name="ventas" table="venta" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Venta" />
+        </set>
+        <set name="cotizacions" table="cotizacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cotizacion" />
+        </set>
+        <set name="articulos" table="articulo" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Articulo" />
+        </set>
+        <set name="pagoventascreditos" table="pagoventascredito" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Pagoventascredito" />
+        </set>
+        <set name="cronoventascreditos" table="cronoventascredito" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUsuario" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cronoventascredito" />
+        </set>
+    </class>
+</hibernate-mapping>

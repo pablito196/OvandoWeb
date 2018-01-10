@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fechaini" class="java.lang.String"/>
+	<parameter name="fechafin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[Select v.NumeroVenta as venta, a.CodigoArticulo, a.Nombre, a.Fabricante, dv.Cantidad, dv.PrecioVentaReal, 
+(
+    dv.PrecioVentaReal - (select distinct case when dc.costounitario is null then 0 else dc.costounitario end
+    from detallecompra dc, compra c
+    where
+    c.idcompra = dc.idcompra
+    and dc.CodigoArticulo = a.CodigoArticulo
+    order by c.idcompra desc limit 1)    
+) as ganancia,
+0 as Saldo, 
+dv.Total, v.FechaVenta as Fecha, 
+(select case when dv.IdFactura = 0 then 0 else NumeroFactura end 
+From factura Where IdFactura = dv.IdFactura
+) as NumFactura
+From articulo a, venta v, detalleventa dv, tipopago tp
+where dv.CodigoArticulo = a.CodigoArticulo
+and dv.NumeroVenta = v.NumeroVenta
+and v.idTipopago = tp.idTipopago
+and tp.DescPago = 'CONTADO'
+and v.Estado = 'VENDIDO'
+and v.FechaVenta between '' and ''
+
+UNION ALL
+
+Select v.NumeroVenta as venta, a.CodigoArticulo, a.Nombre, a.Fabricante, dv.Cantidad, pvc.MontoPagado, 0 as costo, pvc.Saldo, 
+pvc.MontoPagado,pvc.FechaPago as Fecha, 0 as NumFactura
+From articulo a, venta v, detalleventa dv, tipopago tp, cronoventascredito cvc, pagoventascredito pvc
+where dv.CodigoArticulo = a.CodigoArticulo 
+and dv.NumeroVenta = v.NumeroVenta
+and v.idTipopago = tp.idTipopago
+and tp.DescPago = 'CRÉDITO'
+and v.NumeroVenta = cvc.NumeroVenta
+and cvc.IdCronoV = pvc.IdCronoV
+and v.Estado = 'VENDIDO'
+and v.FechaVenta between '' and ''
+
+order by Fecha asc, venta asc]]>
+	</queryString>
+	<field name="venta" class="java.lang.Integer"/>
+	<field name="CodigoArticulo" class="java.lang.String"/>
+	<field name="Nombre" class="java.lang.String"/>
+	<field name="Fabricante" class="java.lang.String"/>
+	<field name="Cantidad" class="java.lang.Float"/>
+	<field name="PrecioVentaReal" class="java.math.BigDecimal"/>
+	<field name="ganancia" class="java.math.BigDecimal"/>
+	<field name="Saldo" class="java.math.BigDecimal"/>
+	<field name="Total" class="java.math.BigDecimal"/>
+	<field name="Fecha" class="java.sql.Timestamp"/>
+	<field name="NumFactura" class="java.lang.Long"/>
+	<variable name="ventafecha" class="java.math.BigDecimal" resetType="Group" resetGroup="fecha" calculation="Sum">
+		<variableExpression><![CDATA[$F{Total}]]></variableExpression>
+	</variable>
+	<variable name="gananciafecha" class="java.math.BigDecimal" resetType="Group" resetGroup="fecha" calculation="Sum">
+		<variableExpression><![CDATA[$F{ganancia}]]></variableExpression>
+	</variable>
+	<variable name="ventatotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{Total}]]></variableExpression>
+	</variable>
+	<variable name="gananciatotal" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ganancia}]]></variableExpression>
+	</variable>
+	<group name="fecha">
+		<groupExpression><![CDATA[$F{Fecha}]]></groupExpression>
+		<groupHeader>
+			<band height="26">
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement x="5" y="4" width="146" height="20"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{Fecha}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="597" y="5" width="78" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{ventafecha}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="493" y="5" width="68" height="14"/>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{gananciafecha}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="522" y="3" width="162" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="423" y="7" width="100" height="12"/>
+					<textElement>
+						<font size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL FECHA:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement x="322" y="30" width="152" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE VENTAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="285" y="50" width="30" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="440" y="50" width="82" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechafin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="405" y="49" width="31" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="320" y="49" width="82" height="20"/>
+				<textElement>
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaini}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="24" y="88" width="716" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="295" y="67" width="212" height="17"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EXPRESADO EN BOLIVIANOS]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="1" width="48" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CANT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="49" y="1" width="57" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CODIGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="105" y="1" width="286" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="391" y="1" width="67" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[FABRICANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="457" y="1" width="56" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[P. VENTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="524" y="1" width="48" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[G.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="569" y="1" width="51" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[SALDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="622" y="1" width="61" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="682" y="1" width="58" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[FACTURA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="40" y="1" width="66" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{CodigoArticulo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="1" width="286" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{Nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="391" y="1" width="67" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{Fabricante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="458" y="1" width="56" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{PrecioVentaReal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="514" y="1" width="48" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{ganancia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="562" y="1" width="51" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{Saldo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="613" y="1" width="61" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{Total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="682" y="1" width="59" height="14"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{NumFactura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="1" width="35" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{Cantidad}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="18">
+			<textField>
+				<reportElement x="7" y="2" width="56" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pag. "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="64" y="2" width="40" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="28" splitType="Stretch">
+			<textField>
+				<reportElement x="563" y="7" width="112" height="21"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ventatotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="7" width="103" height="21"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{gananciatotal}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="521" y="3" width="164" height="1"/>
+				<graphicElement>
+					<pen lineWidth="1.75" lineStyle="Double"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="399" y="6" width="100" height="16"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

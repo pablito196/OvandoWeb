@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar usuarios</h2>
+                <h:form id="formAdministrarUsuario" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tablaUsuarios" paginator="true" paginatorPosition="top" 
+                                 var="usua" value="#{usuarioBEAN.listaUsuarios}" emptyMessage="No hay datos de usuarios" rows="15" >
+                        <p:column headerText="Login">
+                            <h:outputText value="#{usua.loginUsuario}" />
+                        </p:column>
+                        <p:column headerText="Nombres">
+                            <h:outputText value="#{usua.empleado.nombresEmpleado} #{usua.empleado.apellidoPaterno} #{usua.empleado.apellidoMaterno}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Asignar sucursal" oncomplete="PF('dialogAsignarSucursal').show();" update="formAsignarSucursal">
+                                <f:setPropertyActionListener target="#{usuarioBEAN.usuario}" value="#{usua}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Cambiar contraseña" oncomplete="PF('dialogCambiarPassword').show();" update="formCambiarPassword">
+                                <f:setPropertyActionListener target="#{usuarioBEAN.usuario}" value="#{usua}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+                <h:form id="formAsignarSucursal">
+                    <p:dialog id="dlgAsignarSucursal" widgetVar="dialogAsignarSucursal" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Asignar sucursal">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Sucursal: " />
+                            <p:selectOneMenu id="cmbSucursal" value="#{usuarioBEAN.idSucursal}" style="width: 200px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="+" actionListener="#{usuarioBEAN.agregarSucursalAsignada()}" update=":formAsignarSucursal:tablaNuevasSucursalesAsignadas"/>
+                        </p:panelGrid>
+                        <p:outputLabel value="Sucursales asignadas al usuario" style="font-weight: bold;"/>
+                        <p:dataTable id="tablaSucursalesUsuario" var="item1" value="#{usuarioBEAN.listaSucursalesAsignadas}" style="width: 700px;"
+                                            emptyMessage="No hay datos de sucursales asignadas">
+                            <p:column headerText="Sucursal" >
+                                <h:outputText value="#{item1.sucursal.nombreSucursal}" />
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <p:outputLabel value="Sucursales por asignar" style="font-weight: bold;"/>
+                        <p:dataTable id="tablaNuevasSucursalesAsignadas" var="item" value="#{usuarioBEAN.listaSucursalesParaAsignar}" style="width: 700px;"
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No hay datos de sucursales">
+                            <p:ajax event="rowEditCancel" listener="#{usuarioBEAN.onRowCancel}" update=":formAsignarSucursal:tablaNuevasSucursalesAsignadas" />
+                            <p:column headerText="Sucursal" >
+                                <h:outputText value="#{item.sucursal.nombreSucursal}" />
+                            </p:column>
+                            <p:column  headerText="Quitar Sucursal" >  
+                                <p:commandLink value="X" actionListener="#{usuarioBEAN.quitarSucursalAsignada(item.sucursal.nombreSucursal, rowIndex)}"
+                                               title="Quitar Sucursal" style="text-decoration: none; color: #000000"
+                                               update=":formAsignarSucursal:tablaNuevasSucursalesAsignadas"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Guardar" actionListener="#{usuarioBEAN.guardarAsignacionSucursal()}" update=":formAsignarSucursal:tablaSucursalesUsuario"
+                                                        oncomplete="PF('dialogAsignarSucursal').hide();"/>
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogAsignarSucursal').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formCambiarPassword">
+                    <p:dialog id="dlgCambiarPassword" widgetVar="dialogCambiarPassword" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Cambiar contraseña">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre de usuario:" />
+                            <p:outputLabel value="#{usuarioBEAN.usuario.loginUsuario}" />
+                            <p:outputLabel value="Contraseña:" />
+                            <p:password value="#{usuarioBEAN.password}" placeholder="Contraseña" required="true" requiredMessage="Se requiere la contraseña" />
+                            <p:outputLabel value="Vuelva a escribir la contraseña:" />
+                            <p:password value="#{usuarioBEAN.rePassword}" placeholder="Repita la Contraseña" required="true" requiredMessage="Se requiere que vuelva a escribir la contraseña" />
+                            
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{usuarioBEAN.modificarPassword()}" update=":formAdministrarUsuario:tablaUsuarios" 
+                                         oncomplete="PF('dialogCambiarPassword').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogCambiarPassword').hide();" />
+                    </p:dialog>
+                </h:form>
+            
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

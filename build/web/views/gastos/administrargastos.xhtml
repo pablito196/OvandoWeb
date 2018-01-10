@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar gastos</h2>
+                <h:form>
+                    <p:commandButton value="Nuevo Gasto" actionListener="#{categoriaBEAN.prepararNuevaCategoria()}"
+                                     oncomplete="PF('dialogNuevoGasto').show();" update="formNuevoGasto" />
+                </h:form>
+                <h:form id="formAdministrarGasto" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tablaGastos" paginator="true" paginatorPosition="top" 
+                                 var="gast" value="#{gastoBEAN.listaGastos}" emptyMessage="No hay datos de gastos" rows="15" filteredValue="#{gastoBEAN.listaFiltradaGastos}">
+                        <p:column headerText="Nº">
+                            <h:outputText value="#{gast.idGasto}" />
+                        </p:column>
+                        
+                        <p:column headerText="Concepto" filterBy="#{gast.concepto}" filterMatchMode="contains">
+                            <h:outputText value="#{gast.concepto}" />
+                        </p:column>
+                        <p:column headerText="Fecha" filterBy="#{gast.fechaHoraRegistro}" filterMatchMode="contains">
+                            <h:outputText value="#{gast.fechaHoraRegistro}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                            
+                        </p:column>
+                        <p:column headerText="Monto">
+                            <h:outputText value="#{gast.monto}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Detalles" oncomplete="PF('dialogModificarGasto').show();" update="formModificarGasto">
+                                <f:setPropertyActionListener target="#{gastoBEAN.gasto}" value="#{gast}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+                <h:form id="formNuevoGasto">
+                    <p:dialog id="dlgNuevoGasto" widgetVar="dialogNuevoGasto" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de gasto" width="700px">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Concepto:" />
+                            <p:inputText value="#{gastoBEAN.gasto.concepto}" style="width: 360px;" required="true" requiredMessage="Se requiere el concepto del gasto"/>
+                            <p:outputLabel value="Detalle:" />
+                             <p:inputTextarea value="#{gastoBEAN.gasto.detalle}" rows="2" cols="60" maxlength="100" autoResize="false"/>
+                            <p:outputLabel value="Monto:" />
+                            <p:inputText value="#{gastoBEAN.gasto.monto}" required="true" requiredMessage="Se requiere el monto del gasto"/>
+                            
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{gastoBEAN.guardarGasto()}" update=":formAdministrarGasto:tablaGastos" 
+                                         oncomplete="PF('dialogNuevoGasto').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoGasto').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarGasto">
+                    <p:dialog id="dlgModificarGasto" widgetVar="dialogModificarGasto" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Detalle del gasto" width="400px">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nº:" />
+                            <p:outputLabel value="#{gastoBEAN.gasto.idGasto}" />
+                            <p:outputLabel value="Concepto:" />
+                            <p:outputLabel value="#{gastoBEAN.gasto.concepto}" />
+                            <p:outputLabel value="Monto:" />
+                            <p:outputLabel value="#{gastoBEAN.gasto.monto}" />
+                            <p:outputLabel value="Detalle:" />
+                            <p:outputLabel value="#{gastoBEAN.gasto.detalle}" />
+                            <p:outputLabel value="Responsable:" />
+                            <p:outputLabel value="#{gastoBEAN.gasto.usuario.idUsuario}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Cerrar" immediate="true" oncomplete="PF('dialogModificarGasto').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

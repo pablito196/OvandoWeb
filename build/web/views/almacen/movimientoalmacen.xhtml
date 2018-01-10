@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Movimiento de artículos entre almacenes</h2>
+
+                <h:form>
+
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray">
+                        <p:outputLabel value="ALMACEN DE SALIDA" style="font-weight: bold;"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray" columns="4">
+
+                        <p:outputLabel value="Sucursal:" style="font-weight: bold;"/>
+
+                        <p:selectOneMenu id="cmbSucursalSalida" value="#{almacenBEAN.idSucursal}" style="width: 250px">
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                            <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}" />
+                            <p:ajax update="cmbAlmacenSalida" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Almacen:" style="font-weight: bold;"/>
+
+                        <p:selectOneMenu id="cmbAlmacenSalida" value="#{movimientoAlmacenesBEAN.idAlmacenSalida}" style="width: 250px" required="true" requiredMessage="Se requiere seleccionar el almacen">
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                            <f:selectItems value="#{almacenBEAN.lstAlmacenes}" itemValue="#{almacenBEAN.almacen.idAlmacen}" itemLabel="#{almacenBEAN.almacen.nombreAlmacen}" />
+                        </p:selectOneMenu>
+
+
+
+
+
+                    </h:panelGrid>
+
+
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray">
+                        <p:outputLabel value="ALMACEN DE ENTRADA" style="font-weight: bold;"/>
+                    </h:panelGrid>
+
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray" columns="4">
+
+                        <p:outputLabel value="Sucursal:" style="font-weight: bold;"/>
+
+                        <p:selectOneMenu id="cmbSucursalEntrada" value="#{almacenBEAN.idSucursal}" style="width: 250px">
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                            <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}" />
+                            <p:ajax update="cmbAlmacenEntrada" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Almacen:" style="font-weight: bold;"/>
+
+                        <p:selectOneMenu id="cmbAlmacenEntrada" value="#{movimientoAlmacenesBEAN.idAlmacenEntrada}" style="width: 250px" required="true" requiredMessage="Se requiere seleccionar el almacen">
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                            <f:selectItems value="#{almacenBEAN.lstAlmacenes}" itemValue="#{almacenBEAN.almacen.idAlmacen}" itemLabel="#{almacenBEAN.almacen.nombreAlmacen}" />
+                        </p:selectOneMenu>
+
+                    </h:panelGrid>
+
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray">
+                        <p:commandButton value="Nuevo Movimiento" actionListener="#{movimientoAlmacenesBEAN.prepararNuevoMovimiento()}"
+                                         update=":formMovimiento" action="#{movimientoAlmacenesBEAN.enabledButton()}"/>
+                    </h:panelGrid>
+                    <!--     <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray">
+                             <p:outputLabel value="ALMACEN DE ENTRADA" style="font-weight: bold;"/>
+                         </h:panelGrid>
+                         
+                         <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray" columns="4">
+                             
+                             <p:outputLabel value="Sucursal:" style="font-weight: bold;"/>
+     
+                             <p:selectOneMenu id="cmbSucursalEntrada" value="#{almacenBEAN.idSucursal}" style="width: 250px">
+                                 <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                 <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}" />
+                                 <p:ajax update="cmbAlmacenEntrada" />
+                             </p:selectOneMenu>
+     
+                             <p:outputLabel value="Almacen:" style="font-weight: bold;"/>
+     
+                             <p:selectOneMenu id="cmbAlmacenEntrada" value="#{movimientoAlmacenesBEAN.idAlmacenEntrada}" style="width: 250px" required="true" requiredMessage="Se requiere seleccionar el almacen">
+                                 <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                 <f:selectItems value="#{almacenBEAN.lstAlmacenes}" itemValue="#{almacenBEAN.almacen.idAlmacen}" itemLabel="#{almacenBEAN.almacen.nombreAlmacen}" />
+                             </p:selectOneMenu>
+                             
+                         </h:panelGrid>-->
+                </h:form>
+
+                <!-- <h:form>
+                     <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray">
+                         
+                     </h:panelGrid>
+                 </h:form>
+                -->
+                <h:form id="formMovimiento">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 900px; margin: 0 auto; text-align: center;">
+
+                        <p:separator/>
+
+                        <p:panelGrid id="gridBuscarArticulo" columns="3" >
+                            <p:outputLabel value="Codigo Artículo:" />
+                            <p:inputText id="txtBuscarArticuloCodigoArticulo" value="#{movimientoAlmacenesBEAN.codigoArticulo}" size="15" disabled="#{!movimientoAlmacenesBEAN.enabled}">
+                                <p:ajax event="keyup" listener="#{movimientoAlmacenesBEAN.mostrarCantidadArticuloporCodigo()}" 
+                                        update=":formMovimiento:dlgCantidadArticuloporCodigo"/>
+                            </p:inputText>
+                            <p:commandButton value="..."  oncomplete="PF('dialogArticulos').show();"
+                                             update=":formMovimiento:dlgArticulos" disabled="#{!movimientoAlmacenesBEAN.enabled}"/>
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:dataTable id="tablaArticulosMovimiento" var="item" value="#{movimientoAlmacenesBEAN.listaDetalleMovimiento}" emptyMessage="No existen datos de artículos en el detalle de movimiento entre almacenes"
+                                     editable="true" rowIndexVar="rowIndex">
+
+                            <p:ajax event="rowEdit" listener="#{movimientoAlmacenesBEAN.onRowEdit}" update=":formMovimiento:tablaArticulosMovimiento " />
+                            <p:ajax event="rowEditCancel" listener="#{movimientoAlmacenesBEAN.onRowCancel}" update=":formMovimiento:tablaArticulosMovimiento " />
+
+                            <p:column  headerText="Codigo" >  
+                                <h:outputText  value="#{item.articulo.codigoArticulo}" />                  
+                            </p:column>		
+                            <p:column  headerText="Nombre" >  
+                                <h:outputText value="#{item.articulo.nombre}" />                  
+                            </p:column>			
+
+                            <p:column  headerText="Cantidad" >  
+                                <p:cellEditor>
+
+                                    <f:facet name="output">
+                                        <h:outputText value="#{item.cantidad}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.cantidad}" label="Cantidad Articulo"
+                                                     required="true" requiredMessage="Se requiere una cantidad"
+                                                     converter="#{Float}" converterMessage="La cantidad no es correcta"
+                                                     validatorMessage="La cantidad debe ser mayo a cero">
+                                            <f:validateLongRange minimum="1" />
+                                        </p:inputText>
+                                    </f:facet>
+
+
+                                </p:cellEditor>
+
+                            </p:column>
+
+                            <p:column  headerText="Editar Cantidad" >  
+                                <p:rowEditor/>
+                            </p:column>
+                            <p:column  headerText="Quitar Articulo" >  
+                                <p:commandLink value="X" actionListener="#{movimientoAlmacenesBEAN.quitarArticuloDetalleMovimiento(item.articulo.codigoArticulo, rowIndex)}"
+                                               title="Quitar Articulo" style="text-decoration: none; color: #000000"
+                                               update=":formMovimiento:tablaArticulosMovimiento "/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Observaciones: "/>
+                            <p:inputTextarea value="#{movimientoAlmacenesBEAN.observacion}" rows="2" cols="88" maxlength="100" autoResize="false" disabled="#{!movimientoAlmacenesBEAN.enabled}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <p:commandButton value="Guardar" actionListener="#{movimientoAlmacenesBEAN.guardarMovimiento()}" update=":formMovimiento" disabled="#{!movimientoAlmacenesBEAN.enabled}"/>
+                        <p:commandButton value="Cancelar" action="#{movimientoAlmacenesBEAN.limpiarMovimiento()}" update=":formMovimiento" disabled="#{!movimientoAlmacenesBEAN.enabled}"/>
+                    </p:panel>
+
+                    <!--Dialog para mostrar los  articulos-->
+                    <p:dialog id="dlgArticulos" widgetVar="dialogArticulos" modal="true" resizable="false" 
+                              showEffect="explode" hideEffect="explode">
+
+                        <p:dataTable id="tablaArticulos" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="art" value="#{articuloBEAN.listaArticulos}" emptyMessage="No hay datos de artículos" rows="10" widgetVar="articuloTable"  filteredValue="#{articuloBEAN.listaFiltradaArticulo}">
+                            <p:column headerText="Código" filterBy="#{art.codigoArticulo}" filterMatchMode="contains">
+                                <h:outputText id="txtCodigoTabla" value="#{art.codigoArticulo}" />
+                            </p:column>
+                            <p:column headerText="Nombre" filterBy="#{art.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{art.nombre}" />
+                            </p:column>
+                            <p:column  headerText="Descripcion" filterBy="#{art.descripcion}" filterMatchMode="contains">  
+                                <h:outputText value="#{art.descripcion} " />                  
+                            </p:column>
+                            <p:column  headerText="Precio Venta" >  
+                                <h:outputText value="#{art.precioVenta} " />                  
+                            </p:column>
+
+                            <p:column headerText="">
+                                <p:commandButton value="Seleccionar" actionListener="#{movimientoAlmacenesBEAN.pedirCantidadProducto(art.codigoArticulo)}"
+                                                 oncomplete="PF('dialogCantidadArticulo').show();" update=":formMovimiento:dlgCantidadArticulo"/>
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:commandButton value="Cerrar" onclick="PF('dialogArticulos').hide();" />
+                    </p:dialog>
+
+                    <!-- fin dialogArticulos -->
+                    <!--dialog para pedir cantidad  -->
+                    <p:dialog id="dlgCantidadArticulo" widgetVar="dialogCantidadArticulo" header="Canticad de artículos en almacen"
+                              modal="true">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Cantidad Total Existente:" />
+                            <p:outputLabel value="#{movimientoAlmacenesBEAN.articulo.cantidadExistente}" />
+                            <p:outputLabel value="Cantidad en Almacen de Salida:" />
+                            <p:outputLabel value="#{movimientoAlmacenesBEAN.existenciaSalida.cantidad}" />
+                            <p:outputLabel value="Cantidad en Almacen de Entrada:" />
+                            <p:outputLabel value="#{movimientoAlmacenesBEAN.existenciaEntrada.cantidad}" />
+                            <p:outputLabel value="Cantidad Movimiento: "/>
+                            <p:inputText id="txtCantidadEntrada" value="#{movimientoAlmacenesBEAN.cantidadArticulo}"/>       
+                        </h:panelGrid>
+                        <p:commandButton value="Aceptar"  actionListener="#{movimientoAlmacenesBEAN.agregarDatosArticulo()}"
+                                         update=":formMovimiento:tablaArticulosMovimiento :formMovimiento:dlgCantidadArticulo "
+                                         oncomplete="PF('dialogCantidadArticulo').hide(); PF('dialogArticulos').hide(); " />
+                    </p:dialog>
+                    <!-- fin dialog cantidad articulo y preccio de venta-->
+                    <!--dialog para pedir cantidad y precio de preventa por txtcodigoarticulo-->
+                    <p:dialog id="dlgCantidadArticuloporCodigo" widgetVar="dialogCantidadArticuloporCodigo" header="Canticad de artículos en almacen"
+                              modal="true">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Cantidad Total Existente:" />
+                            <p:outputLabel value="#{movimientoAlmacenesBEAN.articulo.cantidadExistente}" />
+                            <p:outputLabel value="Cantidad en Almacen de Salida:" />
+                            <p:outputLabel value="#{movimientoAlmacenesBEAN.existenciaSalida.cantidad}" />
+                            <p:outputLabel value="Cantidad en Almacen de Entrada:" />
+                            <p:outputLabel value="#{movimientoAlmacenesBEAN.existenciaEntrada.cantidad}" />
+                            <p:outputLabel value="Cantidad Movimiento: "/>
+                            <p:inputText id="txtCantidadEntradaporCodigo" value="#{movimientoAlmacenesBEAN.cantidadArticuloporCodigo}"/>               
+                        </h:panelGrid>
+                        <p:commandButton value="Aceptar"  actionListener="#{movimientoAlmacenesBEAN.agregarDatosArticulotxtcodigoArticulo()}"
+                                         update=":formMovimiento:tablaArticulosMovimiento :formMovimiento:dlgCantidadArticuloporCodigo"
+                                         oncomplete="PF('dialogCantidadArticuloporCodigo').hide(); " />
+                    </p:dialog>
+                    <!-- fin dialog cantidad articulo y precio de venta por txtcodigoarticulo-->
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

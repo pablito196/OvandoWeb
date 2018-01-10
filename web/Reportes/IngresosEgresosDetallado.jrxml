@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IngresosEgresosDetallado" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fechaini" class="java.lang.String"/>
+	<parameter name="fechafin" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT v.FechaVenta as Fecha, CONCAT('Vent Nro. ',v.NumeroVenta, ' Pre. Vent Nro. ' ,pv.NumeroPreVenta,' Cliente: ',cl.NombresCliente) as concepto, v.MontoTotal as Venta, 0 as Cobros, 0 as Compras, 0 as Gastos 
+FROM venta v inner join preventa pv on v.NumeroPreVenta = pv.NumeroPreVenta
+    inner join cliente cl on pv.CiCliente = cl.CiCliente
+WHERE v.Estado <> 'ANULADA' and v.IdTipopago < 2
+
+UNION ALL
+SELECT v.FechaVenta as Fecha,
+CONCAT('Vent Nro. ',v.NumeroVenta, ' Cliente: ',cl.NombresCliente) as concepto,
+v.MontoTotal as Venta, 0 as Cobros, 0 as Compras, 0 as Gastos
+FROM venta v inner join cliente cl on v.CiCliente = cl.CiCliente
+WHERE v.Estado <> 'ANULADA' and v.IdTipopago < 2
+and v.NumeroPreVenta = 0
+
+UNION ALL
+SELECT pvc.FechaPago as Fecha, CONCAT('Cred Nro. ',v.NumeroVenta, ' Cliente: ', cl.NombresCliente) as concepto, 0 as montoventa, pvc.MontoPagado, 0 as Compras, 0 as Gastos
+FROM pagoventascredito pvc inner join cronoventascredito cvc on pvc.IdCronoV = cvc.IdCronoV
+    inner join venta v on v.NumeroVenta = cvc.NumeroVenta
+    inner join cliente cl on v.CiCliente = cl.CiCliente
+WHERE v.Estado <> 'ANULADA' and v.IdTipopago = 2 and pvc.MontoPagado > 0
+
+UNION ALL
+SELECT c.FechaCompra as Fecha, CONCAT('Compra Nro ',c.IdCompra, ' Proveedor: ' ,prov.Nombre) as concepto, 0, 0, c.MontoCompra, 0
+FROM compra c inner join proveedor prov on c.IdProveedor = prov.IdProveedor
+WHERE c.Estado <> 'ANULADA' and c.IdTipopago < 2
+
+UNION ALL
+SELECT pcc.FechaPago as Fecha, CONCAT('Compra al credito, Comp N° ', c.IdCompra, ' Proveedor: ', prov.Nombre) as concepto, 0, 0, pcc.MontoPagado, 0 
+FROM pagocompracredito pcc inner join cronocomprascred ccc on pcc.IdCronogramaC = ccc.IdCronogramaC
+    inner join compra c on ccc.IdCompra = c.IdCompra
+    inner join proveedor prov on c.IdProveedor = prov.IdProveedor
+WHERE c.Estado <> 'ANULADA' and c.IdTipopago = 2 and pcc.MontoPagado > 0
+
+UNION ALL
+
+SELECT g.FechaHoraRegistro as Fecha, CONCAT('Gasto Nro ',g.IdGasto, '  Concepto: ',  g.Concepto) as concepto, 0, 0, 0, g.Monto
+FROM gasto g
+
+UNION ALL
+SELECT vs.FechaServicio as Fecha, CONCAT('Servicio N° ', vs.IdVentaServicio, ' Cliente: ', cl.NombresCliente) as concepto, 0, vs.Precio, 0, 0 
+FROM ventaservicio vs inner join cliente cl on vs.CiCliente = cl.CiCliente
+
+ORDER BY Fecha desc]]>
+	</queryString>
+	<field name="Fecha" class="java.sql.Timestamp"/>
+	<field name="concepto" class="java.lang.String"/>
+	<field name="Venta" class="java.math.BigDecimal"/>
+	<field name="Cobros" class="java.math.BigDecimal"/>
+	<field name="Compras" class="java.math.BigDecimal"/>
+	<field name="Gastos" class="java.math.BigDecimal"/>
+	<variable name="totalventas" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{Venta}]]></variableExpression>
+	</variable>
+	<variable name="totalcobros" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{Cobros}]]></variableExpression>
+	</variable>
+	<variable name="totalcompras" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{Compras}]]></variableExpression>
+	</variable>
+	<variable name="totalgastos" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{Gastos}]]></variableExpression>
+	</variable>
+	<variable name="totalingresos" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{Venta}.add( $F{Cobros} )]]></variableExpression>
+	</variable>
+	<variable name="totalegresos" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{Compras}.add( $F{Gastos} )]]></variableExpression>
+	</variable>
+	<variable name="TOTALINGREP" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{totalingresos}]]></variableExpression>
+	</variable>
+	<variable name="TOTALEGRREP" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{totalegresos}]]></variableExpression>
+	</variable>
+	<variable name="TOTALEFECTIVO" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$V{TOTALINGREP}.subtract( $V{TOTALEGRREP} )]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement x="285" y="28" width="100" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechaini}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="302" y="8" width="256" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE INGRESOS Y EGRESOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="331" y="54" width="212" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EXPRESADO EN BOLIVIANOS]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="511" y="30" width="100" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fechafin}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="243" y="30" width="30" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="397" y="28" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AL]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="18" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="5" y="27" width="100" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="172" y="27" width="100" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONCEPTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="398" y="27" width="78" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VENTAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="475" y="27" width="68" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COBROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="611" y="27" width="69" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPRAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="681" y="27" width="50" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[GASTOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="7" y="43" width="791" height="1"/>
+				<graphicElement>
+					<pen lineWidth="2.5" lineStyle="Double"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="446" y="7" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true" isUnderline="false" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[INGRESOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="655" y="5" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EGRESOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="543" y="27" width="68" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="730" y="27" width="68" height="16"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="4" y="1" width="100" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{Fecha}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement mode="Transparent" x="385" y="1" width="73" height="14" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{Venta}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement mode="Transparent" x="458" y="1" width="72" height="14" backcolor="#999999"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{Cobros}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="601" y="1" width="68" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{Compras}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="669" y="1" width="62" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{Gastos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="1" width="289" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{concepto}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="7" y="15" width="791" height="1"/>
+			</line>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="536" y="0" width="65" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{totalingresos}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="731" y="1" width="51" height="14"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{totalegresos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="672" y="1" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="752" y="1" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="9" y="2" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="45" splitType="Stretch">
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="398" y="5" width="60" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalventas}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="459" y="5" width="73" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalcobros}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="601" y="5" width="68" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalcompras}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="669" y="5" width="62" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{totalgastos}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="4" width="100" height="20"/>
+				<textElement>
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALES]]></text>
+			</staticText>
+			<line>
+				<reportElement x="9" y="3" width="789" height="1"/>
+			</line>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="531" y="5" width="67" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALINGREP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="730" y="5" width="62" height="14"/>
+				<textElement textAlignment="Right">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALEGRREP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="24" width="133" height="20"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL EFECTIVO:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;-#,##0.00">
+				<reportElement x="141" y="24" width="100" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALEFECTIVO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

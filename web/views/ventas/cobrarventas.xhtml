@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Cobrar ventas a crédito</h2>
+                
+                <h:form id="formVenta">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 900px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosVenta" style="width: 100%; height: 140px;" >
+                            <p:layoutUnit id="datosCliente" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+
+                                <h:panelGrid id="gridBuscarDatosCliente" columns="5">
+                                    <p:outputLabel value="CI/NIT:" style="font-weight: bold;"/>
+                                    <p:inputText value="#{ventaBEAN.ciCliente}" size="12" >
+                                        <p:ajax event="keyup" listener="#{ventaBEAN.agregarDatosClientetxtnitCliente()}"
+                                                update=":formVenta:gridDatosCliente :formVenta:tablaVentasCredito :formVenta:gridTotalSaldo :formVenta:gridMontoPagar :formVenta:gridObservacionesPago :formVenta:btnPagar :formVenta:btnCancelar" />
+                                    </p:inputText>
+                                    <p:commandButton value="..." oncomplete="PF('dialogClientes').show();"
+                                                     update=":formVenta:dlgClientes" />
+                                    
+                                </h:panelGrid>
+                                <p:separator/>
+                                <h:panelGrid id="gridDatosCliente"  columns="2">
+                                    <p:outputLabel value="Nombres:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblNombreCliente" value="#{ventaBEAN.cliente.nombresCliente}" />
+                                    <p:outputLabel value="Dirección:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblDireccionProveedor" value="#{ventaBEAN.cliente.direccion}" />
+                                    <p:outputLabel value="Teléfono:" style="font-weight: bold;" />
+                                    <p:outputLabel id="lblTelefonoProveedor" value="#{ventaBEAN.cliente.telefono}" />
+                                    
+                                </h:panelGrid>
+
+                            </p:layoutUnit>
+                            
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:dataTable id="tablaVentasCredito" var="item" value="#{ventaBEAN.listaVentascreditoFormateada}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No existen datos de ventas">
+                            
+                            <p:column  headerText="Nº" >  
+                                <h:outputText  value="#{item.numeroVenta}" />                  
+                            </p:column>		
+                            <p:column  headerText="Fecha Venta" >  
+                                <h:outputText value="#{item.fechaVenta}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                  
+                            </p:column>			
+                            <p:column  headerText="Total" style="text-align: right; width: 100px">  
+                                <h:outputText value="#{item.montoVenta}" />                  
+                            </p:column>
+                            
+                            <p:column  headerText="Monto Pagado" style="text-align: right; width: 100px">  
+                                <h:outputText value="#{item.montoPagado}" />                 
+                            </p:column>
+                            <p:column  headerText="Saldo" style="text-align: right; width: 100px" >  
+                                <h:outputText value="#{item.saldo}" />                  
+                            </p:column>
+                            
+                            
+                        </p:dataTable>
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalSaldo" columns="2" style="font-size: 20px; margin: 0 auto;">
+                            <p:outputLabel value="TOTAL SALDO: Bs. "/>
+                            <p:outputLabel value="#{ventaBEAN.totalSaldo}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <h:panelGrid id="gridMontoPagar" columns="2">
+                            <p:outputLabel value="Monto a pagar: "/>
+                            <p:inputText value="#{ventaBEAN.montoaPagar}" disabled="#{!ventaBEAN.enabled}" />
+                        </h:panelGrid>
+                        <h:panelGrid id="gridObservacionesPago" columns="2">
+                            <p:outputLabel value="Observaciones: "/>
+                            <p:inputTextarea value="#{ventaBEAN.observacionPagoVenta}" rows="2" cols="88" maxlength="100" autoResize="false" disabled="#{!ventaBEAN.enabled}" />
+                        </h:panelGrid>
+                        <p:separator/>
+                        <p:commandButton id="btnPagar" value="Pagar" actionListener="#{ventaBEAN.cobrarVentaCredito()}" update=":formVenta" disabled="#{!ventaBEAN.enabled}"/>
+                        
+                        <p:commandButton id="btnCancelar" value="Cancelar" action="#{ventaBEAN.limpiarVentasaCredito()}" update=":formVenta" disabled="#{!ventaBEAN.enabled}"/>
+                    </p:panel>
+                    <!--dialog para mostrar clientes -->
+                    <p:dialog id="dlgClientes" widgetVar="dialogClientes" modal="true" resizable="false"
+                              showEffect="explode" hideEffect="explode" >
+                        <p:dataTable id="tablaClientes" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="cli" value="#{clienteBEAN.listaClientes}" emptyMessage="No hay datos de clientes" rows="15" widgetVar=""  filteredValue="#{clienteBEAN.listaFiltradaClientes}">
+                            <p:column headerText="CI/NIT" filterBy="#{cli.ciCliente}" filterMatchMode="contains">
+                                <h:outputText value="#{cli.ciCliente}" />
+                            </p:column>
+                            <p:column headerText="Nombres" filterBy="#{cli.nombresCliente}" filterMatchMode="contains">
+                                <h:outputText value="#{cli.nombresCliente}" />
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandButton value="Seleccionar" actionListener="#{ventaBEAN.agregarDatosCliente(cli.ciCliente)}"  
+                                                 oncomplete="PF('dialogClientes').hide();" 
+                                                 update=":formVenta:gridDatosCliente :formVenta:tablaVentasCredito :formVenta:gridTotalSaldo :formVenta:gridMontoPagar :formVenta:gridObservacionesPago :formVenta:btnPagar :formVenta:btnCancelar"/>
+
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Cerrar" onclick="PF('dialogClientes').hide();" />
+                    </p:dialog>
+                    <!-- fin dialogClientes -->
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

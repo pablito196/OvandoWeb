@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Unidades de medida</h2>
+                <h:form>
+                    <p:commandButton value="Nueva Unidad" actionListener="#{unidadBEAN.prepararNuevaUnidad()}"
+                                     oncomplete="PF('dialogNuevaUnidad').show();" update="formNuevaUnidad" />
+                </h:form>
+
+                <h:form id="formAdministrarUnidad" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tablaUnidades" paginator="true" paginatorPosition="top" 
+                                 var="un" value="#{unidadBEAN.listaUnidades}" emptyMessage="No hay datos de unidades de medida" rows="15">
+                        <p:column headerText="Nº">
+                            <h:outputText value="#{un.idUnidad}" />
+                        </p:column>
+                        <p:column headerText="Sigla">
+                            <h:outputText value="#{un.sigla}" />
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{un.nombreUnidad}" />
+                        </p:column>
+                        <p:column headerText="Condición">
+                            <h:outputText value="#{un.estado}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarUnidad').show();" update="formModificarUnidad">
+                                <f:setPropertyActionListener target="#{unidadBEAN.unidad}" value="#{un}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevaUnidad">
+                    <p:dialog id="dlgNuevaUnidad" widgetVar="dialogNuevaUnidad" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nueva unidad de medida">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Sigla:" />
+                            <p:inputText value="#{unidadBEAN.unidad.sigla}" required="true" requiredMessage="Se requiere la sigla"/>
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{unidadBEAN.unidad.nombreUnidad}" />
+                            <p:outputLabel value="Condición:" />
+                            <p:selectOneMenu id="cmbCondicion" value="#{unidadBEAN.unidad.estado}" style="width:125px">
+                                <f:selectItem itemLabel="FRACCIONABLE" itemValue="FRACCIONABLE" />
+                                <f:selectItem itemLabel="NO FRACCIONABLE" itemValue="NO FRACCIONABLE" />
+                                
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{unidadBEAN.nuevaUnidad()}" update=":formAdministrarUnidad:tablaUnidades" 
+                                         oncomplete="PF('dialogNuevaUnidad').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevaUnidad').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarUnidad">
+                    <p:dialog id="dlgModificarUnidad" widgetVar="dialogModificarUnidad" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Modificar unidad de medida">
+                       <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Sigla:" />
+                            <p:inputText value="#{unidadBEAN.unidad.sigla}" required="true" requiredMessage="Se requiere la sigla"/>
+                            <p:outputLabel value="Nombre:" />
+                            <p:inputText value="#{unidadBEAN.unidad.nombreUnidad}" />
+                            <p:outputLabel value="Condición:" />
+                            <p:selectOneMenu id="cmbCondicion" value="#{unidadBEAN.unidad.estado}" style="width:125px">
+                                <f:selectItem itemLabel="FRACCIONABLE" itemValue="FRACCIONABLE" />
+                                <f:selectItem itemLabel="NO FRACCIONABLE" itemValue="NO FRACCIONABLE" />
+                                
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{unidadBEAN.actualizarUnidad()}" update=":formAdministrarUnidad:tablaUnidades" 
+                                         oncomplete="PF('dialogModificarUnidad').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarUnidad').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

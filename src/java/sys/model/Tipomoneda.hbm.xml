@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Tipomoneda" table="tipomoneda" catalog="ovandos" optimistic-lock="version">
+        <id name="idTipomoneda" type="java.lang.Integer">
+            <column name="idTipomoneda" />
+            <generator class="identity" />
+        </id>
+        <property name="descripcion" type="string">
+            <column name="Descripcion" length="80" not-null="true" />
+        </property>
+        <set name="tipocambios" table="tipocambio" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipomoneda" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Tipocambio" />
+        </set>
+        <set name="ventas" table="venta" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipomoneda" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Venta" />
+        </set>
+        <set name="compras" table="compra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipomoneda" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Compra" />
+        </set>
+        <set name="preventas" table="preventa" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipomoneda" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Preventa" />
+        </set>
+        <set name="cuentabancarias" table="cuentabancaria" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idTipomoneda" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cuentabancaria" />
+        </set>
+    </class>
+</hibernate-mapping>

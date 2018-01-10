@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <title>Facelets Template</title>
+    </h:head>
+
+    <h:body>
+        <div id="divGeneral" >
+            <div id="top">
+                <ui:insert name="top"></ui:insert>
+                <h1>SISTEMA DE ADMINISTRACION DE VENTAS</h1>
+                <div id="sucursal" >
+                    <span>
+                        <h:form>
+                            <p:outputLabel value="Sucursal: "/>
+                            <p:outputLabel value="#{loginBEAN.sucursal.nombreSucursal}"/>
+                            
+                        </h:form>
+                    </span>
+                        
+                </div>
+                <div id="sessionUsuario" >
+                    <span>
+                        <h:form>
+                            <p:outputLabel value="Bienvenido: "/>
+                            <p:outputLabel value="#{loginBEAN.usuario.empleado.nombresEmpleado} #{loginBEAN.usuario.empleado.apellidoPaterno} #{loginBEAN.usuario.empleado.apellidoMaterno} "/>
+                            <p:commandButton id="btnSalir" value="Salir" action="#{loginBEAN.cerrarSession()}"/>
+                        </h:form>
+                    </span>
+                        
+                </div>
+                <div id="menuPrincipal" >
+                    <h:form>  
+                        <p:menubar>
+                            <p:submenu label="Inicio" icon="ui-icon-document">
+                                <p:menuitem value="Pagina Inicio" outcome="/views/bienvenido" icon="ui-icon-arrowreturnthick-1-w" />
+                                <p:separator />
+                                <p:menuitem value="Salir" action="#{loginBEAN.cerrarSession()}" />
+                            </p:submenu>
+
+                            <p:submenu label="Articulos" icon="ui-icon-pencil">
+                                <p:menuitem value="Administrar categorias" outcome="/views/articulos/categoria" icon="ui-icon-arrowreturnthick-1-w" />
+                                <p:menuitem value="Admnistrar subcategorías" outcome="/views/articulos/subcategoria" icon="ui-icon-arrowreturnthick-1-e" />
+                                <p:menuitem value="Administrar artículos" outcome="/views/articulos/articulos" icon="ui-icon-arrowreturnthick-1-e" />
+                                <p:menuitem value="Unidades de medida" outcome="/views/articulos/unidadmedida" icon="ui-icon-arrowreturnthick-1-e" />
+                            </p:submenu>
+
+                            <p:submenu label="Almacen" icon="ui-icon-help">
+                                <p:menuitem value="Administrar sucursal" outcome="/views/almacen/administrarsucursal" />
+                                <p:menuitem value="Administrar almacen" outcome="/views/almacen/administraralmacen" />
+                                <p:menuitem value="Entrada almacen" outcome="/views/almacen/entradaalmacen" />
+                                <p:menuitem value="Salida almacen" outcome="/views/almacen/salidaalmacen" />
+                                <p:menuitem value="Movimiento almacen" outcome="/views/almacen/movimientoalmacen" />
+                            </p:submenu>
+
+                            <p:submenu label="Compras" icon="ui-icon-gear">
+                                <p:menuitem value="Compras" outcome="/views/compras/compras" />
+                                <p:menuitem value="Administrar compras" outcome="/views/compras/administrarcompras" />
+                                <p:menuitem value="Pago compras a crédito" outcome="/views/compras/pagocompras" />
+                            </p:submenu>
+
+                            <p:submenu label="Ventas" icon="ui-icon-gear">
+                                <p:menuitem value="Cotización" outcome="/views/ventas/cotizacion" />
+                                <p:menuitem value="Pre venta" outcome="/views/ventas/preventa" />
+                                <p:menuitem value="Venta directa" outcome="/views/ventas/ventadirecta" />
+                                <p:menuitem value="Cliente en espera" outcome="/views/ventas/clienteespera" />
+                                <p:menuitem value="Administrar ventas" outcome="/views/ventas/administrarventas" />
+                                <p:menuitem value="Administrar cotización" outcome="/views/ventas/administrarcotizacion" />
+                                <p:menuitem value="Cobrar venta a crédito" outcome="/views/ventas/cobrarventas" />
+                                <p:menuitem value="Administrar remito" outcome="/views/ventas/administrarremito" />
+                            </p:submenu>
+
+                            <p:submenu label="Facturación" icon="ui-icon-gear">
+                                <p:menuitem value="Administrar dosificación" outcome="/views/facturacion/administrardosificacion" />
+                                <p:menuitem value="Administrar facturación" outcome="/views/facturacion/administrarfacturacion" />
+                                <p:menuitem value="Facturación agrupada" outcome="/views/facturacion/facturacionagrupada" />
+                                <p:menuitem value="Libro de ventas" outcome="/views/facturacion/libroventas" />
+                            </p:submenu>
+
+                            <p:submenu label="Informes" icon="ui-icon-gear">
+                                <p:menuitem value="Proveedores" outcome="/views/informes/proveedores" />
+                                <p:menuitem value="Compras" outcome="/views/informes/compras" />
+                                
+                                <p:menuitem value="Ventas" outcome="/views/informes/ventas" />
+                                <p:menuitem value="Ingresos y egresos" outcome="/views/informes/ingresosegresos" />
+                                <p:menuitem value="Cobro de ventas a crédito" outcome="/views/informes/pagoscredito" />
+                                <p:menuitem value="Lista de precios" outcome="/views/informes/listaprecios" />
+                                <p:menuitem value="Artículos vendidos" outcome="/views/informes/articulosvendidos" />
+                                
+                            </p:submenu>
+
+                            <p:submenu label="Gastos" icon="ui-icon-gear">
+                                
+                                <p:menuitem value="Administrar gastos" outcome="/views/gastos/administrargastos" />
+                            </p:submenu>
+                            <p:submenu label="Proveedores" icon="ui-icon-gear">
+                                <p:menuitem value="Administrar proveedores" outcome="/views/proveedores/administrarproveedores" />
+                            </p:submenu>
+                            <p:submenu label="Clientes" icon="ui-icon-gear">
+                                <p:menuitem value="Administrar clientes" outcome="/views/clientes/administrarclientes" />
+                            </p:submenu>
+                            <p:submenu label="Configuración" icon="ui-icon-gear">
+                                <p:menuitem value="Administrar empleados" outcome="/views/configuracion/administrarempleados" />
+                                <p:menuitem value="Administrar usuario" outcome="/views/configuracion/administrarusuario"  />
+                                <p:menuitem value="Tipo de cambio" outcome="/views/configuracion/tipocambio"  />
+                                <p:menuitem value="Copia de seguridad" url="#" />
+                            </p:submenu>
+
+                        </p:menubar>
+                    </h:form>
+                </div>
+            </div>
+
+            <div id="content" class="center_content">
+                <ui:insert name="content">Content</ui:insert>
+            </div>
+
+            <div id="bottom">
+                <ui:insert name="bottom">&copy; 2016 JPC</ui:insert>
+            </div>
+        </div>
+    </h:body>
+
+</html>

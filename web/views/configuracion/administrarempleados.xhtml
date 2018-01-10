@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar empleados</h2>
+                <h:form>
+                    <p:commandButton value="Nuevo Empleado" actionListener="#{empleadoBEAN.prepararNuevoEmpleado()}"
+                                     oncomplete="PF('dialogNuevoEmpleado').show();" update="formNuevoEmpleado" />
+                </h:form>
+                
+                <h:form id="formAdministrarEmpleado" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tablaEmpleados" paginator="true" paginatorPosition="top" 
+                                 var="emplead" value="#{empleadoBEAN.listaEmpleados}" emptyMessage="No hay datos de empleados" rows="15" >
+                        <p:column headerText="Nº">
+                            <h:outputText value="#{emplead.idEmpleado}" />
+                        </p:column>
+                        <p:column headerText="CI">
+                            <h:outputText value="#{emplead.ciEmpleado}" />
+                        </p:column>
+                        <p:column headerText="Nombres">
+                            <h:outputText value="#{emplead.nombresEmpleado} #{emplead.apellidoPaterno} #{emplead.apellidoMaterno}" />
+                        </p:column>
+                        <p:column headerText="Dirección">
+                            <h:outputText value="#{emplead.direccion}" />
+                        </p:column>
+                        <p:column headerText="Teléfono">
+                            <h:outputText value="#{emplead.telefono}" />
+                        </p:column>
+                        <p:column headerText="Celular">
+                            <h:outputText value="#{emplead.celular}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarEmpleado').show();" update="formModificarEmpleado">
+                                <f:setPropertyActionListener target="#{empleadoBEAN.empleado}" value="#{emplead}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Crear usuario" action="#{empleadoBEAN.buscarUsuarioEmpleado()}" 
+                                             update="formCrearUsuario">
+                                <f:setPropertyActionListener target="#{empleadoBEAN.empleado}" value="#{emplead}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Eliminar" oncomplete="PF('dialogEliminarEmpleado').show();" update=":formEliminarEmpleado">
+                                <f:setPropertyActionListener target="#{empleadoBEAN.empleado}" value="#{emplead}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+                <h:form id="formNuevoEmpleado">
+                    <p:dialog id="dlgNuevoEmpleado" widgetVar="dialogNuevoEmpleado" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nuevo empleado">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="CI:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.ciEmpleado}" required="true" requiredMessage="Se requiere el CI del empleado" />
+                            <p:outputLabel value="Nombres:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.nombresEmpleado}" required="true" requiredMessage="Se requiere el Nombre del empleado" />
+                            <p:outputLabel value="Apellido Paterno:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.apellidoPaterno}" required="true" requiredMessage="Se requiere el Apellido Paterno del empleado" />
+                            <p:outputLabel value="Apellido Materno:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.apellidoMaterno}" required="true" requiredMessage="Se requiere el Apellido Materno del empleado" />
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.celular}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{empleadoBEAN.guardarEmpleado()}" update=":formAdministrarEmpleado:tablaEmpleados" 
+                                         oncomplete="PF('dialogNuevoEmpleado').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoEmpleado').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarEmpleado">
+                    <p:dialog id="dlgModificarEmpleado" widgetVar="dialogModificarEmpleado" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Modificar empleado">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="CI:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.ciEmpleado}" required="true" requiredMessage="Se requiere el CI del empleado" />
+                            <p:outputLabel value="Nombres:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.nombresEmpleado}" required="true" requiredMessage="Se requiere el Nombre del empleado" />
+                            <p:outputLabel value="Apellido Paterno:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.apellidoPaterno}" required="true" requiredMessage="Se requiere el Apellido Paterno del empleado" />
+                            <p:outputLabel value="Apellido Materno:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.apellidoMaterno}" required="true" requiredMessage="Se requiere el Apellido Materno del empleado" />
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{empleadoBEAN.empleado.celular}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{empleadoBEAN.modificarEmpleado()}" update=":formAdministrarEmpleado:tablaEmpleados" 
+                                         oncomplete="PF('dialogModificarEmpleado').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarEmpleado').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formEliminarEmpleado">
+                    <p:dialog id="dlgEliminarEmpleado" widgetVar="dialogEliminarEmpleado" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Eliminar empleado">
+                        <h:outputText value="Desea eliminar este empleado?" />
+                        <p:commandButton value="Si" actionListener="#{empleadoBEAN.eliminarEmpleado()}" update=":formAdministrarEmpleado:tablaEmpleados" 
+                                         oncomplete="PF('dialogEliminarEmpleado').hide()" />
+                        <p:commandButton value="No" immediate="true" oncomplete="PF('dialogEliminarEmpleado').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formCrearUsuario">
+                    <p:dialog id="dlgCrearUsuario" widgetVar="dialogCrearUsuario" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nuevo usuario">
+                         <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre de usuario:" />
+                            <p:inputText value="#{empleadoBEAN.nuevoUsuario.loginUsuario}" required="true" requiredMessage="Se requiere nombre de usuario" />
+                            <p:outputLabel value="Contraseña:" />
+                            <p:password value="#{empleadoBEAN.nuevoUsuario.password}" placeholder="Contraseña" required="true" requiredMessage="Se requiere la contraseña" />
+                            <p:outputLabel value="Vuelva a escribir la contraseña:" />
+                            <p:password value="#{empleadoBEAN.rePassword}" placeholder="Repita la Contraseña" required="true" requiredMessage="Se requiere que vuelva a escribir la contraseña" />
+                            <p:outputLabel value="Tipo de usuario:" />
+                            <p:selectOneMenu id="cmbTipoUsuario" value="#{empleadoBEAN.idTipousuario}" style="width: 180px" required="true" requiredMessage="Se requiere le tipo de usuario">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{empleadoBEAN.lstTipoUsuario}" itemValue="#{empleadoBEAN.tipousuario.idTipoUsuario}" itemLabel="#{empleadoBEAN.tipousuario.descripcion}" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{empleadoBEAN.guardarUsuario()}" update=":formAdministrarEmpleado:tablaEmpleados" 
+                                         oncomplete="PF('dialogCrearUsuario').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogCrearUsuario').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

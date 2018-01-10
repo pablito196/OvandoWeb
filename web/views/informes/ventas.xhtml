@@ -1,0 +1,226 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>Facelet Title</title>
+        <script type="text/javascript" >
+            PrimeFaces.locale['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText: 'Todo el día'
+            };
+        </script>
+    </h:head>
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Informe de ventas</h2>
+                <h:form id="formInformeVentas">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 1130px; margin: 0 auto; text-align: center;">
+                        <p:layout id="capaDatosInformeVentas" style="width: 100%; height: 550px;" >
+                            <p:layoutUnit id="fechas" position="center" style="padding: 5px; text-align: justify; 
+                                          font-size: 14px;" size="300">
+
+
+                                <h:panelGrid id="gridFechas" columns="4">
+                                    <p:outputLabel for="cdfechaInicio" value="Desde:" style="font-weight: bold;"/>
+                                    <p:calendar id="cdfechaInicio" value="#{ventaBEAN.fechaInicio}" locale="es" navigator="true" pattern="yyyy-MMM-dd"  size="15" required="true" requiredMessage="Seleccione fecha de inicio"/>    
+                                    <p:outputLabel for="cdfechaFin" value="Hasta:" style="font-weight: bold;"/>
+                                    <p:calendar id="cdfechaFin" value="#{ventaBEAN.fechaFin}" locale="es" navigator="true" pattern="yyyy-MMM-dd"  size="15" required="true" requiredMessage="Seleccione fecha final"/>
+                                    <p:outputLabel value="Estado:" style="font-weight: bold;"/>
+                                    <p:selectOneMenu id="cmbEstado" value="#{ventaBEAN.estado}" style="width:125px">
+                                        <f:selectItem itemLabel="VENDIDO" itemValue="VENDIDO" />
+                                        <f:selectItem itemLabel="ANULADA" itemValue="ANULADA" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Tipo:" style="font-weight: bold;"/>
+                                    <p:selectOneMenu id="cmbTipo" value="#{ventaBEAN.tipoVenta}" style="width:125px">
+                                        <f:selectItem itemLabel="TODAS" itemValue="0" />
+                                        <f:selectItem itemLabel="CONTADO" itemValue="1" />
+                                        <f:selectItem itemLabel="CRÉDITO" itemValue="2" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="Sucursal:" style="font-weight: bold;"/>
+                            <p:selectOneMenu id="cmbSucursal" value="#{ventaBEAN.idSucursal}" required="true" style="width:250px" requiredMessage="Se requiere sucursal">
+                                <f:selectItem itemLabel="TODAS" itemValue="0" />
+                                <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}"/>
+                            </p:selectOneMenu>
+                                    <p:commandButton value="Buscar" actionListener="#{ventaBEAN.buscarVentas()}" update=":formInformeVentas:tablaVentas :formInformeVentas:gridTotalVentas"/>
+                                </h:panelGrid>
+                                <p:separator />
+                                <h:panelGrid id="gridChekBoxClientes" columns="2">
+                                    <p:outputLabel value="Todos los clientes" style="font-weight: bold;"/>
+                                    <p:selectBooleanCheckbox value="#{ventaBEAN.todosLosClientes}">
+                                        <p:ajax  update=":formInformeVentas:gridDatosClientes " listener="#{ventaBEAN.activarControlesBusqueda()}" />
+                                    </p:selectBooleanCheckbox>
+                                </h:panelGrid>
+                                <h:panelGrid id="gridDatosClientes" columns="2" >
+                                    <p:dataTable id="tablaClientes" paginator="true" paginatorPosition="top" 
+                                                 var="ct" value="#{clienteBEAN.listaClientes}" emptyMessage="No hay datos de clientes" rows="8" widgetVar=""  filteredValue="#{clienteBEAN.listaFiltradaClientes}" style="width: 500px">
+                                        <p:column headerText="NIT/CI" filterBy="#{ct.ciCliente}" filterMatchMode="contains">
+                                            <h:outputText value="#{ct.ciCliente}" />
+                                        </p:column>
+                                        <p:column headerText="Nombres / Razón Social" filterBy="#{ct.nombresCliente}" filterMatchMode="contains">
+                                            <h:outputText value="#{ct.nombresCliente}" />
+                                        </p:column>
+
+                                        <p:column headerText="Seleccionar">
+                                            <p:commandButton value="Seleccionar" action="#{ventaBEAN.agregarClientesInforme()}" update=":formInformeVentas:tablaClientesSeleccionados" disabled="#{!ventaBEAN.enabledControlesBusqueda}">
+                                                <f:setPropertyActionListener target="#{ventaBEAN.cliente}" value="#{ct}" />
+                                            </p:commandButton> 
+
+                                        </p:column>
+                                    </p:dataTable>
+
+                                    <p:dataTable id="tablaClientesSeleccionados" paginator="true" paginatorPosition="top" 
+                                                 var="ct" value="#{ventaBEAN.listaClientes}" emptyMessage="No hay datos de clientes seleccionados" rows="8" style="width: 500px" rowIndexVar="rowIndex">
+                                        <p:column headerText="NIT/CI" >
+                                            <h:outputText value="#{ct.ciCliente}" />
+                                        </p:column>
+                                        <p:column headerText="Nombres / Razón Social" >
+                                            <h:outputText value="#{ct.nombresCliente}" />
+                                        </p:column>
+
+                                        <p:column headerText="Quitar">
+                                            <p:commandLink value="X" actionListener="#{ventaBEAN.quitarClienteListaInforme(ct.ciCliente, rowIndex)}" 
+                                                           title="Quitar" style="text-decoration: none; color: #000000"
+                                                           update=":formInformeVentas:tablaClientesSeleccionados" disabled="#{!ventaBEAN.enabledControlesBusqueda}"/>
+
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:layoutUnit>
+
+                        </p:layout>
+                        <p:separator/>
+
+                        <p:dataTable id="tablaVentas" var="item" value="#{ventaBEAN.lstVentas}" 
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No existen datos de ventas">
+
+                            <f:facet name="{Exporters}">
+                                <h:commandLink>
+                                    <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                                    <p:dataExporter type="pdf" target="tablaVentas" fileName="Ventas" />
+                                </h:commandLink>
+
+                            </f:facet>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Nº Venta" />
+                                </f:facet>
+                                <h:outputText  value="#{item.numeroVenta}" />                  
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Nº Preventa" />
+                                </f:facet>
+                                <h:outputText value="#{item.numeroPreVenta}" />                  
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha" />
+                                </f:facet>
+                                <h:outputText value="#{item.fechaVenta}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                 
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Cliente" />
+                                </f:facet>
+                                <h:outputText value="#{item.cliente.nombresCliente}" />                 
+                            </p:column>
+
+                            <p:column >  
+                                <f:facet name="header">
+                                    <h:outputText value="Tipo" />
+                                </f:facet>
+                                <h:outputText value="#{item.tipopago.descPago}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="TC" />
+                                </f:facet>
+                                <h:outputText value="#{item.tipoCambio}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Total" />
+                                </f:facet>
+                                <h:outputText value="#{item.montoTotal}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Estado" />
+                                </f:facet>
+                                <h:outputText value="#{item.estado}" />                 
+                            </p:column>
+
+                            <p:column>  
+                                <f:facet name="header">
+                                    <h:outputText value="Observaciones" />
+                                </f:facet>
+                                <h:outputText value="#{item.observaciones}" />                 
+                            </p:column>
+                            
+                        </p:dataTable>
+
+                        <p:separator/>
+                        <h:panelGrid id="gridTotalVentas" columns="2" style="font-size: 24px; margin: 0 auto;">
+                            <p:outputLabel value="TOTAL VENTAS: Bs. "/>
+                            <p:outputLabel value="#{ventaBEAN.totalVentaInforme}"/>
+                        </h:panelGrid>
+                        <h:commandLink id="pdf" >
+                            <h:graphicImage style="width:25px" value="/resources/images/pdf.png"/>
+                            <p:dataExporter type="pdf" target="tablaVentas" fileName="Ventas" />
+                        </h:commandLink>
+
+                        <h:commandLink id="btnImprimir"  actionListener="#{ventaBEAN.verReporte()}" title="Vista previa" target="_blank">
+                            <p:graphicImage style="width:25px" url="/resources/images/Impresora.png"/>
+
+                        </h:commandLink>
+
+
+                    </p:panel>
+
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

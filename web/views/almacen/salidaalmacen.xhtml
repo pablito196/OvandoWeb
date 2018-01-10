@@ -1,0 +1,175 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Registro de salida de artículos de un almacen</h2>
+                
+                <h:form>
+                    
+                    <h:panelGrid width="900px" style="margin: 0 auto; background-color: lightgray" columns="4">
+                        <p:outputLabel value="Sucursal:" style="font-weight: bold;"/>
+
+                        <p:selectOneMenu id="cmbSucursal" value="#{almacenBEAN.idSucursal}" style="width: 250px">
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                            <f:selectItems value="#{sucursalBEAN.lstSucursales}" itemValue="#{sucursalBEAN.sucursal.idSucursal}" itemLabel="#{sucursalBEAN.sucursal.nombreSucursal}" />
+                            <p:ajax update="cmbAlmacen" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Almacen:" style="font-weight: bold;"/>
+
+                        <p:selectOneMenu id="cmbAlmacen" value="#{salidaBEAN.idAlmacen}" style="width: 250px" required="true" requiredMessage="Se requiere seleccionar el almacen">
+                            <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                            <f:selectItems value="#{almacenBEAN.lstAlmacenes}" itemValue="#{almacenBEAN.almacen.idAlmacen}" itemLabel="#{almacenBEAN.almacen.nombreAlmacen}" />
+                        </p:selectOneMenu>
+                        <p:commandButton value="Nueva Salida" actionListener="#{salidaBEAN.prepararNuevaSalida()}"
+                                         update=":formSalida" action="#{salidaBEAN.enabledButton()}"/>
+                    </h:panelGrid>
+                </h:form>
+                
+                <h:form id="formSalida">
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:panel header="-" style="width: 900px; margin: 0 auto; text-align: center;">
+                        
+                        <p:separator/>
+
+                        <p:panelGrid id="gridBuscarArticulo" columns="3" >
+                            <p:outputLabel value="Codigo Artículo:" />
+                            <p:inputText id="txtBuscarArticuloCodigoArticulo" value="#{salidaBEAN.codigoArticulo}" size="15" disabled="#{!salidaBEAN.enabled}">
+                                <p:ajax event="keyup" listener="#{salidaBEAN.mostrarCantidadArticuloporCodigo()}" 
+                                        update=":formSalida:dlgCantidadArticuloporCodigo"/>
+                            </p:inputText>
+                            <p:commandButton value="..."  oncomplete="PF('dialogArticulos').show();"
+                                             update=":formSalida:dlgArticulos" disabled="#{!salidaBEAN.enabled}"/>
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:dataTable id="tablaArticulosSalida" var="item" value="#{salidaBEAN.listaDetalleSalida}" emptyMessage="No existen datos de artículos en el detalle de salida"
+                                     editable="true" rowIndexVar="rowIndex">
+
+                            <p:ajax event="rowEdit" listener="#{salidaBEAN.onRowEdit}" update=":formSalida:tablaArticulosSalida " />
+                            <p:ajax event="rowEditCancel" listener="#{salidaBEAN.onRowCancel}" update=":formSalida:tablaArticulosSalida " />
+
+                            <p:column  headerText="Codigo" >  
+                                <h:outputText  value="#{item.articulo.codigoArticulo}" />                  
+                            </p:column>		
+                            <p:column  headerText="Nombre" >  
+                                <h:outputText value="#{item.articulo.nombre}" />                  
+                            </p:column>			
+
+                            <p:column  headerText="Cantidad" >  
+                                <p:cellEditor>
+
+                                    <f:facet name="output">
+                                        <h:outputText value="#{item.cantidad}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.cantidad}" label="Cantidad Articulo"
+                                                     required="true" requiredMessage="Se requiere una cantidad"
+                                                     converter="#{Float}" converterMessage="La cantidad no es correcta"
+                                                     validatorMessage="La cantidad debe ser mayo a cero">
+                                            <f:validateLongRange minimum="1" />
+                                        </p:inputText>
+                                    </f:facet>
+
+
+                                </p:cellEditor>
+
+                            </p:column>
+
+                            <p:column  headerText="Editar Cantidad" >  
+                                <p:rowEditor/>
+                            </p:column>
+                            <p:column  headerText="Quitar Articulo" >  
+                                <p:commandLink value="X" actionListener="#{salidaBEAN.quitarArticuloDetalleSalida(item.articulo.codigoArticulo, rowIndex)}"
+                                               title="Quitar Articulo" style="text-decoration: none; color: #000000"
+                                               update=":formSalida:tablaArticulosSalida "/>
+                            </p:column>
+                        </p:dataTable>
+
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Observaciones: "/>
+                            <p:inputTextarea value="#{salidaBEAN.observacion}" rows="2" cols="88" maxlength="100" autoResize="false" disabled="#{!salidaBEAN.enabled}"/>
+                        </h:panelGrid>
+                        <p:separator/>
+                        <p:commandButton value="Guardar" actionListener="#{salidaBEAN.guardarSalida()}" update=":formSalida" disabled="#{!salidaBEAN.enabled}"/>
+                        <p:commandButton value="Cancelar" action="#{salidaBEAN.limpiarSalida()}" update=":formSalida" disabled="#{!salidaBEAN.enabled}"/>
+                    </p:panel>
+
+                    <!--Dialog para mostrar los  articulos-->
+                    <p:dialog id="dlgArticulos" widgetVar="dialogArticulos" modal="true" resizable="false" 
+                              showEffect="explode" hideEffect="explode">
+
+                        <p:dataTable id="tablaArticulos" paginator="true" paginatorPosition="top" style="width: 700px;"
+                                     var="art" value="#{articuloBEAN.listaArticulos}" emptyMessage="No hay datos de artículos" rows="10" widgetVar="articuloTable"  filteredValue="#{articuloBEAN.listaFiltradaArticulo}">
+                            <p:column headerText="Código" filterBy="#{art.codigoArticulo}" filterMatchMode="contains">
+                                <h:outputText id="txtCodigoTabla" value="#{art.codigoArticulo}" />
+                            </p:column>
+                            <p:column headerText="Nombre" filterBy="#{art.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{art.nombre}" />
+                            </p:column>
+                            <p:column  headerText="Descripcion" filterBy="#{art.descripcion}" filterMatchMode="contains">  
+                                <h:outputText value="#{art.descripcion} " />                  
+                            </p:column>
+                            <p:column  headerText="Precio Venta" >  
+                                <h:outputText value="#{art.precioVenta} " />                  
+                            </p:column>
+
+                            <p:column headerText="">
+                                <p:commandButton value="Seleccionar" actionListener="#{salidaBEAN.pedirCantidadProducto(art.codigoArticulo)}"
+                                                 oncomplete="PF('dialogCantidadArticulo').show();" update=":formSalida:dlgCantidadArticulo"/>
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:commandButton value="Cerrar" onclick="PF('dialogArticulos').hide();" />
+                    </p:dialog>
+
+                    <!-- fin dialogArticulos -->
+                    <!--dialog para pedir cantidad  -->
+                    <p:dialog id="dlgCantidadArticulo" widgetVar="dialogCantidadArticulo" header="Canticad de artículos en almacen"
+                              modal="true">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Cantidad Total Existente:" />
+                            <p:outputLabel value="#{salidaBEAN.articulo.cantidadExistente}" />
+                            <p:outputLabel value="Cantidad en Almacen:" />
+                            <p:outputLabel value="#{salidaBEAN.existencia.cantidad}" />
+                            <p:outputLabel value="Cantidad Salida: "/>
+                            <p:inputText id="txtCantidadSalida" value="#{salidaBEAN.cantidadArticulo}"/>       
+                        </h:panelGrid>
+                        <p:commandButton value="Aceptar"  actionListener="#{salidaBEAN.agregarDatosArticulo()}"
+                                         update=":formSalida:tablaArticulosSalida :formSalida:dlgCantidadArticulo "
+                                         oncomplete="PF('dialogCantidadArticulo').hide(); PF('dialogArticulos').hide(); " />
+                    </p:dialog>
+                    <!-- fin dialog cantidad articulo -->
+                    <!--dialog para pedir cantidad por txtcodigoarticulo-->
+                    <p:dialog id="dlgCantidadArticuloporCodigo" widgetVar="dialogCantidadArticuloporCodigo" header="Canticad de artículos en almacen"
+                              modal="true">
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Cantidad Total Existente:" />
+                            <p:outputLabel value="#{salidaBEAN.articulo.cantidadExistente}" />
+                            <p:outputLabel value="Cantidad en Almacen:" />
+                            <p:outputLabel value="#{salidaBEAN.existencia.cantidad}" />
+                            <p:outputLabel value="Cantidad Salida: "/>
+                            <p:inputText id="txtCantidadSalidaporCodigo" value="#{salidaBEAN.cantidadArticuloporCodigo}"/>               
+                        </h:panelGrid>
+                        <p:commandButton value="Aceptar"  actionListener="#{salidaBEAN.agregarDatosArticulotxtcodigoArticulo()}"
+                                         update=":formSalida:tablaArticulosSalida :formSalida:dlgCantidadArticuloporCodigo"
+                                         oncomplete="PF('dialogCantidadArticuloporCodigo').hide(); " />
+                    </p:dialog>
+                    <!-- fin dialog cantidad articulo por txtcodigoarticulo-->
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

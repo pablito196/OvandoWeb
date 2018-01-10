@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar categorías</h2>
+                
+                <h:form>
+                    <p:commandButton value="Nueva Categoria" actionListener="#{categoriaBEAN.prepararNuevaCategoria()}"
+                                     oncomplete="PF('dialogNuevaCategoria').show();" update="formNuevaCategoria" />
+                </h:form>
+                
+                <h:form id="formAdministrarCategoria" >
+                    <p:dataTable id="tblCategorias" paginator="true" paginatorPosition="top" 
+                                 var="cat" value="#{categoriaBEAN.listaCategorias}" emptyMessage="No hay datos de categorías" rows="15">
+                        <p:column headerText="Categoria">
+                            <h:outputText value="#{cat.nombreCategoria}" />
+                        </p:column>
+                        <p:column headerText="Modificar">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarCategoria').show();" update="formModificarCategoria">
+                                <f:setPropertyActionListener target="#{categoriaBEAN.categoria}" value="#{cat}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevaCategoria">
+                    <p:dialog id="dlNuevaCategoria" widgetVar="dialogNuevaCategoria" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre Categoria:" />
+                            <p:inputText value="#{categoriaBEAN.categoria.nombreCategoria}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{categoriaBEAN.nuevaCategoria()}" update=":formAdministrarCategoria:tblCategorias" 
+                                         oncomplete="PF('dialogNuevaCategoria').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevaCategoria').hide();" />
+                    </p:dialog>
+                </h:form>
+                
+                <h:form id="formModificarCategoria">
+                    <p:dialog id="dlModificarCategoria" widgetVar="dialogModificarCategoria" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" >
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre Categoria:" />
+                            <p:inputText value="#{categoriaBEAN.categoria.nombreCategoria}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{categoriaBEAN.actualizarCategoria()}" update=":formAdministrarCategoria:tblCategorias" 
+                                         oncomplete="PF('dialogModificarCategoria').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarCategoria').hide();" />
+                    </p:dialog>
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

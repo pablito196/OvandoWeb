@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Sucursal" table="sucursal" catalog="ovandos" optimistic-lock="version">
+        <id name="idSucursal" type="java.lang.Integer">
+            <column name="IdSucursal" />
+            <generator class="identity" />
+        </id>
+        <property name="nombreSucursal" type="string">
+            <column name="NombreSucursal" length="60" not-null="true" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="Direccion" length="70" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="Telefono" length="12" />
+        </property>
+        <set name="almacens" table="almacen" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdSucursal" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Almacen" />
+        </set>
+        <set name="dosificacions" table="dosificacion" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdSucursal" />
+            </key>
+            <one-to-many class="sys.model.Dosificacion" />
+        </set>
+        <set name="ingresos" table="ingreso" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdSucursal" />
+            </key>
+            <one-to-many class="sys.model.Ingreso" />
+        </set>
+    </class>
+</hibernate-mapping>

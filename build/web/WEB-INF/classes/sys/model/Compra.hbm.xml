@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Compra" table="compra" catalog="ovandos" optimistic-lock="version">
+        <id name="idCompra" type="java.lang.Integer">
+            <column name="IdCompra" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="almacen" class="sys.model.Almacen" fetch="select">
+            <column name="IdAlmacen" />
+        </many-to-one>
+        <many-to-one name="proveedor" class="sys.model.Proveedor" fetch="select">
+            <column name="IdProveedor" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tipomoneda" class="sys.model.Tipomoneda" fetch="select">
+            <column name="idTipomoneda" not-null="true" />
+        </many-to-one>
+        <many-to-one name="tipopago" class="sys.model.Tipopago" fetch="select">
+            <column name="idTipopago" not-null="true" />
+        </many-to-one>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="tipoCambio" type="big_decimal">
+            <column name="TipoCambio" precision="4" not-null="true" />
+        </property>
+        <property name="facturaCompra" type="string">
+            <column name="FacturaCompra" length="30" />
+        </property>
+        <property name="numeroRecibo" type="string">
+            <column name="NumeroRecibo" length="30" />
+        </property>
+        <property name="fechaCompra" type="timestamp">
+            <column name="FechaCompra" length="19" not-null="true" />
+        </property>
+        <property name="observacionCompra" type="string">
+            <column name="ObservacionCompra" length="300" />
+        </property>
+        <property name="montoCompra" type="big_decimal">
+            <column name="MontoCompra" precision="9" />
+        </property>
+        <property name="estado" type="string">
+            <column name="Estado" length="20" />
+        </property>
+        <set name="detallecompras" table="detallecompra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdCompra" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Detallecompra" />
+        </set>
+        <set name="cronocomprascreds" table="cronocomprascred" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdCompra" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cronocomprascred" />
+        </set>
+    </class>
+</hibernate-mapping>

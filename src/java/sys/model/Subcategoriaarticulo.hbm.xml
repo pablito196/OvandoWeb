@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Subcategoriaarticulo" table="subcategoriaarticulo" catalog="ovandos" optimistic-lock="version">
+        <id name="idSubcategoria" type="java.lang.Integer">
+            <column name="IdSubcategoria" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="categoriaarticulo" class="sys.model.Categoriaarticulo" fetch="select">
+            <column name="IdCategoria" not-null="true" />
+        </many-to-one>
+        <property name="nombreSubCategoria" type="string">
+            <column name="NombreSubCategoria" length="100" />
+        </property>
+        <property name="descripcion" type="string">
+            <column name="Descripcion" length="300" />
+        </property>
+        <set name="articulos" table="articulo" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdSubCategoria" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Articulo" />
+        </set>
+    </class>
+</hibernate-mapping>

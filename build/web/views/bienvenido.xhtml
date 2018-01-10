@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h1>BIENVENIDO SISTEMA DE VENTAS</h1>
+                <p:panelGrid columns="9" style="margin: 0 auto;">
+                    <h:outputLink id="Almacen" value="/views/almacen/movimientoalmacen.xhtml">
+                    <p:graphicImage height="96" width="96" value="/resources/images/almacen.png"  alt="Movimiento de almacenes" />
+                </h:outputLink>
+                <p:tooltip id="toolTipAlmacen" for="Almacen" value="Movimiento de almacenes"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Articulos" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/articulos.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipArticulos" for="Articulos" value="Administrar artículos"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Compras" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/compras.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipCompras" for="Compras" value="Compras"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Preventas" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/ventas.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipPreventas" for="Preventas" value="Preventas"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Proveedores" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/proveedor.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipProveedores" for="Proveedores" value="Proveedores"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Clientes" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/clientes.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipClientes" for="Clientes" value="Clientes"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Empleados" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/personal.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipEmpleados" for="Empleados" value="Administrar empleados"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Gastos" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/gastos.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipGastos" for="Gastos" value="Gastos"
+                           showEffect="clip" hideEffect="explode" />
+                <h:outputLink id="Usuarios" value="#">
+                    <p:graphicImage height="96" width="96" value="/resources/images/configuracion.png" />
+                </h:outputLink>
+                <p:tooltip id="toolTipUsuarios" for="Usuarios" value="Administrar usuarios"
+                           showEffect="clip" hideEffect="explode" />
+                </p:panelGrid>
+                
+                
+             
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

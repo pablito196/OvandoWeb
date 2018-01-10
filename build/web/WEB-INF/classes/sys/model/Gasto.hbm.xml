@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Gasto" table="gasto" catalog="ovandos" optimistic-lock="version">
+        <id name="idGasto" type="java.lang.Integer">
+            <column name="IdGasto" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuario" class="sys.model.Usuario" fetch="select">
+            <column name="IdUsuario" not-null="true" />
+        </many-to-one>
+        <property name="concepto" type="string">
+            <column name="Concepto" length="150" not-null="true" />
+        </property>
+        <property name="detalle" type="string">
+            <column name="Detalle" length="65535" />
+        </property>
+        <property name="monto" type="big_decimal">
+            <column name="Monto" precision="7" not-null="true" />
+        </property>
+        <property name="fechaHoraRegistro" type="timestamp">
+            <column name="FechaHoraRegistro" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

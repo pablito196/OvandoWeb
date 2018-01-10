@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Unidad" table="unidad" catalog="ovandos" optimistic-lock="version">
+        <id name="idUnidad" type="java.lang.Integer">
+            <column name="IdUnidad" />
+            <generator class="identity" />
+        </id>
+        <property name="nombreUnidad" type="string">
+            <column name="NombreUnidad" length="60" not-null="true" />
+        </property>
+        <property name="sigla" type="string">
+            <column name="Sigla" length="15" />
+        </property>
+        <property name="estado" type="string">
+            <column name="Estado" length="20" />
+        </property>
+        <set name="articulos" table="articulo" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="IdUnidad" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Articulo" />
+        </set>
+    </class>
+</hibernate-mapping>

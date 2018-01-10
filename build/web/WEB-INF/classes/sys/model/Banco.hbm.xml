@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 21-jul-2016 11:11:11 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="sys.model.Banco" table="banco" catalog="ovandos" optimistic-lock="version">
+        <id name="idBanco" type="java.lang.Integer">
+            <column name="idBanco" />
+            <generator class="identity" />
+        </id>
+        <property name="nombreBanco" type="string">
+            <column name="NombreBanco" length="150" not-null="true" />
+        </property>
+        <set name="cuentabancarias" table="cuentabancaria" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="idBanco" not-null="true" />
+            </key>
+            <one-to-many class="sys.model.Cuentabancaria" />
+        </set>
+    </class>
+</hibernate-mapping>

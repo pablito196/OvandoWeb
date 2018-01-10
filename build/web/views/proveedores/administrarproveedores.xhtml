@@ -1,0 +1,357 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar proveedores</h2>
+                <h:form>
+                    <p:commandButton value="Nuevo Proveedor" actionListener="#{proveedorBEAN.prepararNuevoProveedor()}"
+                                     oncomplete="PF('dialogNuevoProveedor').show();" update=":formNuevoProveedor" />
+                </h:form>
+
+                <h:form id="formAdministrarProveedor" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblProveedores" paginator="true" paginatorPosition="top" 
+                                 var="prov" value="#{proveedorBEAN.listaProveedores}" emptyMessage="No hay datos de Proveedores" rows="15" filteredValue="#{proveedorBEAN.listaFiltradaProveedores}">
+                        <p:column headerText="Nit/CI" filterBy="#{prov.nit}" filterMatchMode="contains">
+                            <h:outputText value="#{prov.nit}" />
+                        </p:column>
+                        <p:column headerText="Nombre/Razon Social" filterBy="#{prov.nombre}" filterMatchMode="contains">
+                            <h:outputText value="#{prov.nombre}" />
+                        </p:column>
+                        <p:column headerText="Dirección">
+                            <h:outputText value="#{prov.direccion}" />
+                        </p:column>
+                        <p:column headerText="Ciudad">
+                            <h:outputText value="#{prov.ciudad.idCiudad}" />
+                        </p:column>
+                        <p:column headerText="Teléfono">
+                            <h:outputText value="#{prov.telefono}" />
+                        </p:column>
+                        <p:column headerText="Celular">
+                            <h:outputText value="#{prov.celular}" />
+                        </p:column>
+                        <p:column headerText="Rubro">
+                            <h:outputText value="#{prov.rubro}" />
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Ver Contactos" oncomplete="PF('dialogAdministrarContactos').show();" update=":formAdministrarContacto">
+                                <f:setPropertyActionListener target="#{proveedorBEAN.proveedor}" value="#{prov}"/>
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Modificar" oncomplete="PF('dialogModificarProveedor').show();" update=":formModificarProveedor">
+                                <f:setPropertyActionListener target="#{proveedorBEAN.proveedor}" value="#{prov}"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                <!--dialog nuevo proveedor -->
+                <h:form id="formNuevoProveedor">
+                    <p:growl id="mensajeNuevoProveeedor" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dialog id="dlNuevoProveedor" widgetVar="dialogNuevoProveedor" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nuevo proveedor">
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Nit/CI:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.nit}" required="true" requiredMessage="Se requiere Nit/CI"/>
+                            <p:outputLabel value="Nombre/Razon Social:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.nombre}" required="true" requiredMessage="Se requiere Nombre/Razon Social"/>
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.celular}" />
+                            <p:outputLabel value="Rubro:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.rubro}" />
+                            <p:outputLabel value="Pais:" />
+                            <p:selectOneMenu id="cmbPais" value="#{ciudadBEAN.idPais}" style="width: 180px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{paisBEAN.lstPaises}" itemValue="#{paisBEAN.pais.idPais}" itemLabel="#{paisBEAN.pais.nombrePais}" />
+                                <p:ajax update="cmbCiudad" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Ciudad:" />
+                            <p:selectOneMenu id="cmbCiudad" value="#{proveedorBEAN.idCiudad}" style="width: 180px" required="true" requiredMessage="Se requiere Ciudad">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="#{proveedorBEAN.proveedor.ciudad.idCiudad}" />
+                                <f:selectItems value="#{ciudadBEAN.lstCiudades}" itemValue="#{ciudadBEAN.ciudad.idCiudad}" itemLabel="#{ciudadBEAN.ciudad.nombreCiudad}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Página web:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.paginaWeb}" />
+                            <p:outputLabel value="Correo electrónico:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.correoElectronico}" />
+                        </p:panelGrid>
+                        <p:panelGrid id="gridCuentasBancarias" columns="4" style="margin: 0 auto;">    
+                            <p:outputLabel value="Banco:" />
+                            <p:selectOneMenu id="cmbBanco" value="#{proveedorBEAN.idBanco}" style="width: 290px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{bancoBEAN.lstBancos}" itemValue="#{bancoBEAN.banco.idBanco}" itemLabel="#{bancoBEAN.banco.nombreBanco}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Cta. Bancaria:" />
+                            <p:inputText value="#{proveedorBEAN.cuentaBancaria}" />
+                            <p:outputLabel value="Moneda:" />
+                            <p:selectOneMenu id="cmbMoneda" value="#{proveedorBEAN.idTipomoneda}" style="width: 200px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{tipomonedaBEAN.lstMonedas}" itemValue="#{tipomonedaBEAN.tipomoneda.idTipomoneda}" itemLabel="#{tipomonedaBEAN.tipomoneda.descripcion}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="+" actionListener="#{proveedorBEAN.agregarCuentabancaria()}" update=":formNuevoProveedor:tablaCuentasBancarias :formNuevoProveedor:gridCuentasBancarias"/>
+                        </p:panelGrid>
+                        <p:dataTable id="tablaCuentasBancarias" var="item" value="#{proveedorBEAN.listaCuentabancaria}" style="width: 700px;"
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No hay datos de cuentas bancarias">
+                            <p:ajax event="rowEdit" listener="#{proveedorBEAN.onRowEdit}" update=":formNuevoProveedor:tablaCuentasBancarias" />
+                            <p:ajax event="rowEditCancel" listener="#{proveedorBEAN.onRowCancel}" update=":formNuevoProveedor:tablaCuentasBancarias" />
+                            <p:column headerText="Banco" >
+                                <h:outputText value="#{item.banco.nombreBanco}" />
+                            </p:column>
+                            <p:column headerText="Cta. Bancaria" >
+                                <p:cellEditor>
+
+                                    <f:facet name="output">
+                                        <h:outputText value="#{item.numeroCuenta}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.numeroCuenta}" label="Cuenta Bancaria"
+                                                     required="true" requiredMessage="Se requiere el número de cuenta bancaria">
+
+                                        </p:inputText>
+                                    </f:facet>
+
+
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Moneda" >
+                                <h:outputText value="#{item.tipomoneda.descripcion}" />
+                            </p:column>
+                            <p:column  headerText="Editar Cuenta Bancaria" >  
+                                <p:rowEditor/>
+                            </p:column>
+                            <p:column  headerText="Quitar Cuenta Bancaria" >  
+                                <p:commandLink value="X" actionListener="#{proveedorBEAN.quitarCuentaBancaria(item.numeroCuenta, rowIndex)}"
+                                               title="Quitar Cuenta Bancaria" style="text-decoration: none; color: #000000"
+                                               update=":formNuevoProveedor:tablaCuentasBancarias"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Guardar" actionListener="#{proveedorBEAN.guardarProveedor()}" update=":formAdministrarProveedor:tblProveedores :formNuevoProveedor:tablaCuentasBancarias :formNuevoProveedor:gridCuentasBancarias" 
+                                         oncomplete="PF('dialogNuevoProveedor').hide();" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoProveedor').hide();" />
+                    </p:dialog>
+                </h:form>
+                <!--fin dialog nuevo proveedor -->
+
+                <!--dialog modificar proveedor -->
+                <h:form id="formModificarProveedor">
+                    <p:growl id="mensajeModificarProveeedor" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dialog id="dlgModificarProveedor" widgetVar="dialogModificarProveedor" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Modificar proveedor">
+                        <p:panelGrid columns="4" style="margin: 0 auto;">
+                            <p:outputLabel value="Nit/CI:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.nit}" required="true" requiredMessage="Se requiere Nit/CI"/>
+                            <p:outputLabel value="Nombre/Razon Social:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.nombre}" required="true" requiredMessage="Se requiere Nombre/Razon Social" style="width: 250px"/>
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.celular}" />
+                            <p:outputLabel value="Rubro:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.rubro}" />
+                            <p:outputLabel value="Pais:" />
+                            <p:selectOneMenu id="cmbPais" value="#{ciudadBEAN.idPais}" style="width: 180px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{paisBEAN.lstPaises}" itemValue="#{paisBEAN.pais.idPais}" itemLabel="#{paisBEAN.pais.nombrePais}" />
+                                <p:ajax update="cmbCiudad" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Ciudad:" />
+                            <p:selectOneMenu id="cmbCiudad" value="#{proveedorBEAN.idCiudad}" style="width: 180px" required="true" requiredMessage="Se requiere Ciudad">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="#{proveedorBEAN.proveedor.ciudad.idCiudad}" />
+                                <f:selectItems value="#{ciudadBEAN.lstCiudades}" itemValue="#{ciudadBEAN.ciudad.idCiudad}" itemLabel="#{ciudadBEAN.ciudad.nombreCiudad}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Página web:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.paginaWeb}" />
+                            <p:outputLabel value="Correo electrónico:" />
+                            <p:inputText value="#{proveedorBEAN.proveedor.correoElectronico}" />
+                        </p:panelGrid>
+                        
+                        
+                         <p:separator/>
+                         <p:outputLabel value="Cuentas bancarias registradas" style="font-weight: bold;"/>
+                        <p:dataTable id="tablaCuentasBancariasProveedor" var="item1" value="#{proveedorBEAN.listaCtabancariaFormateada}" style="width: 700px;"
+                                            emptyMessage="No hay datos de cuentas bancarias registradas">
+                            <p:column headerText="Banco" >
+                                <h:outputText value="#{item1.nombreBanco}" />
+                            </p:column>
+                            <p:column headerText="Cta. Bancaria" >
+                                 <h:outputText value="#{item1.numeroCuenta}" />
+                            </p:column>
+                            <p:column headerText="Moneda" >
+                                <h:outputText value="#{item1.nombreMoneda}" />
+                            </p:column>
+                        </p:dataTable>
+                        <p:separator/>
+                        <p:outputLabel value="Registro de nuevas cuentas bancarias" style="font-weight: bold;"/>
+                        <p:panelGrid id="gridCuentasBancarias" columns="4" style="margin: 0 auto;">    
+                            <p:outputLabel value="Banco:" />
+                            <p:selectOneMenu id="cmbBanco" value="#{proveedorBEAN.idBanco}" style="width: 290px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{bancoBEAN.lstBancos}" itemValue="#{bancoBEAN.banco.idBanco}" itemLabel="#{bancoBEAN.banco.nombreBanco}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Cta. Bancaria:" />
+                            <p:inputText value="#{proveedorBEAN.cuentaBancaria}" />
+                            <p:outputLabel value="Moneda:" />
+                            <p:selectOneMenu id="cmbMoneda" value="#{proveedorBEAN.idTipomoneda}" style="width: 200px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{tipomonedaBEAN.lstMonedas}" itemValue="#{tipomonedaBEAN.tipomoneda.idTipomoneda}" itemLabel="#{tipomonedaBEAN.tipomoneda.descripcion}" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="+" actionListener="#{proveedorBEAN.agregarCuentabancaria()}" update=":formModificarProveedor:tablaCuentasBancariasNuevas :formModificarProveedor:gridCuentasBancarias"/>
+                        </p:panelGrid>
+                       
+                        <p:dataTable id="tablaCuentasBancariasNuevas" var="item" value="#{proveedorBEAN.listaCuentabancaria}" style="width: 700px;"
+                                     editable="true" rowIndexVar="rowIndex" emptyMessage="No hay datos de cuentas bancarias">
+                            <p:ajax event="rowEdit" listener="#{proveedorBEAN.onRowEdit}" update=":formModificarProveedor:tablaCuentasBancariasNuevas" />
+                            <p:ajax event="rowEditCancel" listener="#{proveedorBEAN.onRowCancel}" update=":formModificarProveedor:tablaCuentasBancariasNuevas" />
+                            <p:column headerText="Banco" >
+                                <h:outputText value="#{item.banco.nombreBanco}" />
+                            </p:column>
+                            <p:column headerText="Cta. Bancaria" >
+                                <p:cellEditor>
+
+                                    <f:facet name="output">
+                                        <h:outputText value="#{item.numeroCuenta}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{item.numeroCuenta}" label="Cuenta Bancaria"
+                                                     required="true" requiredMessage="Se requiere el número de cuenta bancaria">
+
+                                        </p:inputText>
+                                    </f:facet>
+
+
+                                </p:cellEditor>
+                            </p:column>
+                            <p:column headerText="Moneda" >
+                                <h:outputText value="#{item.tipomoneda.descripcion}" />
+                            </p:column>
+                            <p:column  headerText="Editar Cuenta Bancaria" >  
+                                <p:rowEditor/>
+                            </p:column>
+                            <p:column  headerText="Quitar Cuenta Bancaria" >  
+                                <p:commandLink value="X" actionListener="#{proveedorBEAN.quitarCuentaBancaria(item.numeroCuenta, rowIndex)}"
+                                               title="Quitar Cuenta Bancaria" style="text-decoration: none; color: #000000"
+                                               update=":formModificarProveedor:tablaCuentasBancariasNuevas"/>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Guardar" actionListener="#{proveedorBEAN.modificarProveedor()}" update=":formAdministrarProveedor:tblProveedores :formModificarProveedor:tablaCuentasBancariasNuevas :formModificarProveedor:gridCuentasBancarias" 
+                                         oncomplete="PF('dialogModificarProveedor').hide();" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogModificarProveedor').hide();" />
+                    </p:dialog>
+                </h:form>
+                <!--fin dialog modificar proveedor -->
+                
+                
+                <!--dialog administrar contactos proveedor -->
+
+
+                <p:dialog id="dlgAdministrarContactos" widgetVar="dialogAdministrarContactos" resizable="false" showEffect="explode" 
+                          hideEffect="explode" modal="true" header="Administrar contactos por proveedor" width="1500px">
+                    <h:form>
+                        <p:commandButton value="Nuevo Contacto" 
+                                         oncomplete="PF('dialogNuevoContacto').show();" update=":formAdministrarContacto" />
+                    </h:form>
+
+                    <h:form id="formAdministrarContacto" >
+                        <p:growl id="mensajeGeneralContactos" showDetail="true" autoUpdate="true" life="3000" />
+                        <p:dataTable id="tablaContactos" paginator="true" paginatorPosition="top" 
+                                     var="contacto" value="#{proveedorBEAN.listaContactosPorProveedor}" emptyMessage="No hay datos de Contactos" rows="15" >
+                            <p:column headerText="Nombre" >
+                                <h:outputText value="#{contacto.nombreCompleto}" />
+                            </p:column>
+                            <p:column headerText="Dirección">
+                                <h:outputText value="#{contacto.direccion}" />
+                            </p:column>
+                            <p:column headerText="Ciudad">
+                                <h:outputText value="#{contacto.ciudad.idCiudad}" />
+                            </p:column>
+                            <p:column headerText="Teléfono">
+                                <h:outputText value="#{contacto.telefono}" />
+                            </p:column>
+                            <p:column headerText="Celular">
+                                <h:outputText value="#{contacto.celular}" />
+                            </p:column>
+                            <p:column headerText="Correo electronico">
+                                <h:outputText value="#{contacto.correoElectronico}" />
+                            </p:column>
+                            <p:column headerText="Cargo">
+                                <h:outputText value="#{contacto.cargo}" />
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandButton value="Modificar" >
+                                   <!-- <f:setPropertyActionListener target="#{categoriaBEAN.categoria}" value="#{cat}"/>-->
+                                </p:commandButton>
+                            </p:column>
+                            <p:column headerText="">
+                                <p:commandButton value="Eliminar" >
+                                   <!-- <f:setPropertyActionListener target="#{categoriaBEAN.categoria}" value="#{cat}"/>-->
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <p:commandButton value="Cerrar" immediate="true" oncomplete="PF('dialogAdministrarContactos').hide();" />
+                    </h:form>
+                    
+                    
+
+
+                </p:dialog>
+
+                <!--fin dialog administrar contactos -->
+
+                <h:form id="formNuevoContacto">
+                    <!-- dialog para nuevo contacto -->
+                    <p:dialog id="dlgNuevoContacto" widgetVar="dialogNuevoContacto" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Registro de nuevo contacto">
+                        <p:panelGrid columns="2" style="margin: 0 auto;">
+                            <p:outputLabel value="Nombre Completo:" />
+                            <p:inputText value="#{proveedorBEAN.contacto.nombreCompleto}" required="true" requiredMessage="Se requiere el nombre completo del Contacto"/>
+                            <p:outputLabel value="Dirección:" />
+                            <p:inputText value="#{proveedorBEAN.contacto.direccion}" />
+                            <p:outputLabel value="Teléfono:" />
+                            <p:inputText value="#{proveedorBEAN.contacto.telefono}" />
+                            <p:outputLabel value="Celular:" />
+                            <p:inputText value="#{proveedorBEAN.contacto.celular}" />
+
+                            <p:outputLabel value="Pais:" />
+                            <p:selectOneMenu id="cmbPais" value="#{ciudadBEAN.idPais}" style="width: 180px">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{paisBEAN.lstPaises}" itemValue="#{paisBEAN.pais.idPais}" itemLabel="#{paisBEAN.pais.nombrePais}" />
+                                <p:ajax update="cmbCiudad" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Ciudad:" />
+                            <p:selectOneMenu id="cmbCiudad" value="#{proveedorBEAN.idCiudad}" style="width: 180px" required="true" requiredMessage="Se requiere Ciudad">
+                                <f:selectItem itemLabel="-Seleccione-" itemValue="" />
+                                <f:selectItems value="#{ciudadBEAN.lstCiudades}" itemValue="#{ciudadBEAN.ciudad.idCiudad}" itemLabel="#{ciudadBEAN.ciudad.nombreCiudad}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Cargo:" />
+                            <p:inputText value="#{proveedorBEAN.contacto.cargo}" />
+                            <p:outputLabel value="Correo electronico:" />
+                            <p:inputText value="#{proveedorBEAN.contacto.correoElectronico}" />
+                        </p:panelGrid>
+                        <p:commandButton value="Guardar" actionListener="#{proveedorBEAN.guardarContacto()}" update=":formAdministrarContacto:tablaContactos" 
+                                         oncomplete="PF('dialogNuevoContacto').hide()" />
+                        <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('dialogNuevoContacto').hide();" />
+                    </p:dialog>
+                    <!-- fin dialog nuevo contacto -->
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

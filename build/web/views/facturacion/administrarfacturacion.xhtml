@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                <h2>Administrar facturación</h2>
+                <h:form id="formAdministrarFactura" >
+                    <p:growl id="mensajeGeneral" showDetail="true" autoUpdate="true" life="3000" />
+                    <p:dataTable id="tblFacturas" paginator="true" paginatorPosition="top" 
+                                 var="fact" value="#{facturaBEAN.listaFactura}" emptyMessage="No hay datos de facturas" rows="15" filteredValue="#{facturaBEAN.listaFiltradaFactura}">
+                        <p:column headerText="Nº Factura" filterBy="#{fact.factura.numeroFactura}" filterMatchMode="contains">
+                            <h:outputText value="#{fact.factura.numeroFactura}" />
+                        </p:column>
+                        <p:column headerText="Nº Venta" filterBy="#{fact.venta.numeroVenta}" filterMatchMode="contains">
+                            <h:outputText value="#{fact.venta.numeroVenta}" />
+                        </p:column>
+                        <p:column headerText="Nit" filterBy="#{fact.factura.nitCliente}" filterMatchMode="contains">
+                            <h:outputText value="#{fact.factura.nitCliente}" /> 
+                        </p:column>
+                        <p:column headerText="Razon Social" filterBy="#{fact.factura.razonSocial}" filterMatchMode="contains" style="width: 300px">
+                            <h:outputText value="#{fact.factura.razonSocial}" /> 
+                        </p:column>
+                        <p:column headerText="Fecha" filterBy="#{fact.factura.fechaFactura}" filterMatchMode="contains" style="width: 100px; text-align: center">
+                            <h:outputText value="#{fact.factura.fechaFactura}" >
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        
+                        <p:column headerText="Monto" style="width: 80px; text-align: right">
+                            <h:outputText value="#{fact.factura.monto}" />
+                        </p:column>
+                        <p:column headerText="Estado" style="width: 100px; text-align: center">
+                            <h:outputText value="#{fact.factura.estado}" />
+                        </p:column>
+                        
+                        <p:column headerText="Imprimir factura" style="width: 60px; text-align: center">
+                            <h:commandLink id="btnImprimir"  action="#{facturaBEAN.imprimirFactura()}" title="Permite imprimir la factura" target="_blank">
+                            <f:setPropertyActionListener target="#{facturaBEAN.ventaFactura}" value="#{fact}"/>
+                                <p:graphicImage style="width:25px" url="/resources/images/Impresora.png"/>
+
+                        </h:commandLink>
+                        </p:column>
+                        
+                        <p:column headerText="Visualizar factura" style="width: 60px; text-align: center">
+                            <h:commandLink id="btnVisualizar"  action="#{facturaBEAN.verFactura()}" title="Permite visualizar la factura" target="_blank">
+                            <f:setPropertyActionListener target="#{facturaBEAN.ventaFactura}" value="#{fact}"/>
+                                <p:graphicImage style="width:25px" url="/resources/images/preview.png"/>
+
+                        </h:commandLink>
+                        </p:column>
+                        <p:column headerText="">
+                            <p:commandButton value="Anular" oncomplete="PF('dialogAnularFactura').show();" update="formAnularFactura">
+                                <f:setPropertyActionListener target="#{facturaBEAN.ventaFactura}" value="#{fact}"/>
+                            </p:commandButton>
+                        </p:column>    
+                    </p:dataTable>
+                </h:form>
+                
+                <h:form id="formAnularFactura" >
+                    <p:dialog id="dlgAnularFactura" widgetVar="dialogAnularFactura" resizable="false" showEffect="explode" 
+                              hideEffect="explode" modal="true" header="Anular Factura">
+                        <h:outputText value="Esta seguro de anular la factura? " />
+                        <p:commandButton value="Si" actionListener="#{facturaBEAN.anularFactura()}" update="formAdministrarFactura" 
+                                         oncomplete="PF('dialogAnularFactura').hide()" />
+                        <p:commandButton value="No" immediate="true" oncomplete="PF('dialogAnularFactura').hide();" />
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
